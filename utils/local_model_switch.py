@@ -159,7 +159,6 @@ def _collect_type_names(loaded_model: Any) -> List[str]:
                 names.append(type(real).__name__)
     except Exception:
         pass
-    # unique preserve order
     out = []
     seen = set()
     for n in names:
@@ -177,7 +176,6 @@ def _model_display_name(loaded_model: Any) -> str:
     names = _collect_type_names(loaded_model)
     if not names:
         return "UnknownModel"
-    # Prefer concrete model class over ModelPatcher wrapper
     for n in reversed(names):
         if n not in {"ModelPatcher", "ModelPatcherDynamic", "LoadedModel"}:
             return n
@@ -196,6 +194,21 @@ def _model_size_mb(loaded_model: Any) -> Optional[float]:
     except Exception:
         pass
     return None
+
+
+def _model_loaded_bytes(loaded_model: Any) -> float:
+    try:
+        if hasattr(loaded_model, "model_loaded_memory"):
+            return float(loaded_model.model_loaded_memory() or 0)
+    except Exception:
+        pass
+    try:
+        patcher = getattr(loaded_model, "model", None)
+        if patcher is not None and hasattr(patcher, "loaded_size"):
+            return float(patcher.loaded_size() or 0)
+    except Exception:
+        pass
+    return 0.0
 
 
 def classify_comfy_model(loaded_model: Any) -> str:
@@ -223,33 +236,82 @@ def _soft_empty_cache(mm) -> None:
                 pass
 
 
-def _vram_stats_mb() -> Optional[Dict[str, float]]:
+def _vram_stats_from_nvsmi() -> Optional[Dict[str, float]]:
+    """Board-level VRAM via nvidia-smi (sees llama-server / other processes)."""
     try:
-        import torch
-        if not torch.cuda.is_available():
+        import subprocess
+        out = subprocess.check_output(
+            [
+                "nvidia-smi",
+                "--query-gpu=memory.free,memory.used,memory.total",
+                "--format=csv,noheader,nounits",
+            ],
+            text=True,
+            timeout=3,
+            stderr=subprocess.DEVNULL,
+        )
+        line = (out or "").strip().splitlines()[0]
+        parts = [p.strip() for p in line.split(",")]
+        if len(parts) < 3:
             return None
-        device = torch.device("cuda:0")
-        free_b, total_b = torch.cuda.mem_get_info(device)
+        free_mb = float(parts[0])
+        used_mb = float(parts[1])
+        total_mb = float(parts[2])
+        if total_mb <= 0:
+            return None
         return {
-            "free": free_b / (1024.0 * 1024.0),
-            "total": total_b / (1024.0 * 1024.0),
-            "used": (total_b - free_b) / (1024.0 * 1024.0),
-            "alloc": float(torch.cuda.memory_allocated(device)) / (1024.0 * 1024.0),
-            "reserved": float(torch.cuda.memory_reserved(device)) / (1024.0 * 1024.0),
-            "free_bytes": float(free_b),
-            "used_bytes": float(total_b - free_b),
+            "free": free_mb,
+            "total": total_mb,
+            "used": used_mb,
+            "alloc": 0.0,
+            "reserved": 0.0,
+            "free_bytes": free_mb * 1024.0 * 1024.0,
+            "used_bytes": used_mb * 1024.0 * 1024.0,
+            "source": "nvidia-smi",
         }
     except Exception:
         return None
 
 
+def _vram_stats_mb() -> Optional[Dict[str, float]]:
+    # Prefer nvidia-smi: torch.cuda.mem_get_info on some Windows setups only
+    # reflects the current process and misses external llama-server VRAM.
+    stats = _vram_stats_from_nvsmi()
+    alloc = 0.0
+    reserved = 0.0
+    try:
+        import torch
+        if torch.cuda.is_available():
+            device = torch.device("cuda:0")
+            alloc = float(torch.cuda.memory_allocated(device)) / (1024.0 * 1024.0)
+            reserved = float(torch.cuda.memory_reserved(device)) / (1024.0 * 1024.0)
+            if stats is None:
+                free_b, total_b = torch.cuda.mem_get_info(device)
+                stats = {
+                    "free": free_b / (1024.0 * 1024.0),
+                    "total": total_b / (1024.0 * 1024.0),
+                    "used": (total_b - free_b) / (1024.0 * 1024.0),
+                    "free_bytes": float(free_b),
+                    "used_bytes": float(total_b - free_b),
+                    "source": "torch",
+                }
+    except Exception:
+        pass
+    if not stats:
+        return None
+    stats["alloc"] = alloc
+    stats["reserved"] = reserved
+    return stats
+
+
 def _fmt_vram(stats: Optional[Dict[str, float]]) -> str:
     if not stats:
         return "vram:n/a"
+    src = stats.get("source") or "?"
     return (
         f"used:{stats['used']:.0f}MB free:{stats['free']:.0f}MB "
         f"alloc:{stats['alloc']:.0f}MB reserved:{stats['reserved']:.0f}MB "
-        f"/ {stats['total']:.0f}MB"
+        f"/ {stats['total']:.0f}MB ({src})"
     )
 
 
@@ -277,6 +339,80 @@ def _primary_torch_device(mm):
     return None
 
 
+def _resolve_offload_device(patcher: Any, mm):
+    """Prefer the patcher's own offload_device (usually CPU)."""
+    try:
+        off = getattr(patcher, "offload_device", None)
+        if off is not None:
+            return off
+    except Exception:
+        pass
+    if hasattr(mm, "unet_offload_device"):
+        try:
+            return mm.unet_offload_device()
+        except Exception:
+            pass
+    try:
+        import torch
+        return torch.device("cpu")
+    except Exception:
+        return "cpu"
+
+
+def _soft_offload_one(loaded: Any, mm, want_free_bytes: float) -> Tuple[float, str]:
+    """
+    Move weights to CPU/offload_device while keeping the LoadedModel entry alive.
+
+    Returns (bytes_reported_freed, detail_tag).
+    Does NOT detach and does NOT pop from current_loaded_models.
+    """
+    patcher = getattr(loaded, "model", None)
+    if patcher is None:
+        return 0.0, "dead"
+
+    try:
+        loaded.currently_used = False
+    except Exception:
+        pass
+
+    before = _model_loaded_bytes(loaded)
+    if before <= 1.0:
+        return 0.0, "already_offloaded"
+
+    # Request enough to park nearly all VRAM-resident weights.
+    # partially_unload stops once memory_freed meets the request; oversized is OK.
+    request = max(float(want_free_bytes), before + 64.0 * 1024.0 * 1024.0, 1.0)
+    offload_device = _resolve_offload_device(patcher, mm)
+
+    freed = 0.0
+    method = "none"
+    try:
+        if hasattr(patcher, "partially_unload"):
+            raw = patcher.partially_unload(offload_device, request)
+            freed = float(raw or 0)
+            method = f"partially_unload->{offload_device}"
+        elif hasattr(loaded, "model_unload"):
+            # Fallback only: model_unload(memory < loaded) may soft-offload without detach.
+            soft_need = max(1.0, before - 1.0)
+            fully = loaded.model_unload(soft_need)
+            if fully:
+                method = "model_unload_detach"
+            else:
+                method = "model_unload_partial"
+            after_fb = _model_loaded_bytes(loaded)
+            freed = max(0.0, before - after_fb)
+        else:
+            return 0.0, "no_api"
+    except Exception as exc:
+        return 0.0, f"error:{type(exc).__name__}"
+
+    after = _model_loaded_bytes(loaded)
+    observed = max(0.0, before - after)
+    report = max(freed, observed)
+    remain_mb = after / (1024.0 * 1024.0)
+    return report, f"{method}|remain:{remain_mb:.1f}MB"
+
+
 def unload_comfy_image_models(
     reason: str = "prepare_for_llm",
     unload_clip_with_image: bool = False,
@@ -284,14 +420,14 @@ def unload_comfy_image_models(
     service_id: Optional[str] = None,
 ) -> bool:
     """
-    NORMAL-friendly unload via Comfy free_memory / unload_all_models only.
+    Soft-offload Comfy image models to CPU/offload_device.
 
-    free_memory(need) means: I want at least `need` bytes free.
-    `need` comes from LLM size cache (measured) or fixed estimate by model name.
+    Keeps entries in current_loaded_models so weights can stay resident in RAM
+    and reload without re-reading from disk. Avoids free_memory()/detach() which
+    pop models and force a cold restage.
     """
     from .common import PROCESS_PREFIX, WARN_PREFIX
-    from .llm_vram_cache import begin_llm_vram_session, get_llm_need_bytes
-
+    
     try:
         import comfy.model_management as mm
     except Exception as exc:  # pragma: no cover
@@ -303,119 +439,103 @@ def unload_comfy_image_models(
         if loaded_list is None:
             return False
 
-        before = len(loaded_list)
+        before_count = len(loaded_list)
         vram_before = _vram_stats_mb()
-        total_vram_b = None
-        if vram_before and vram_before.get("total"):
-            total_vram_b = float(vram_before["total"]) * 1024.0 * 1024.0
-        llm_need, llm_note = get_llm_need_bytes(service_id, llm_model, total_vram_bytes=total_vram_b)
-        llm_need_mb = llm_need / (1024.0 * 1024.0)
 
-        if before == 0:
+        if before_count == 0:
             print(
-                f"{PROCESS_PREFIX} Comfy 显存卸载 | 无需卸载 | 当前无已加载模型 | "
-                f"LLM申报:{llm_need_mb:.0f}MB({llm_note}) | {_fmt_vram(vram_before)} | {reason}",
+                f"{PROCESS_PREFIX} Comfy 软卸载 | 无需卸载 | 当前无已加载模型 | "
+                f"{_fmt_vram(vram_before)} | {reason}",
                 flush=True,
-            )
-            begin_llm_vram_session(
-                service_id,
-                llm_model,
-                (vram_before or {}).get("free_bytes"),
-                (vram_before or {}).get("used_bytes"),
             )
             return True
 
         snapshot = []
-        keep_loaded = []
+        targets = []
+        kept = []
         for loaded in list(loaded_list):
             kind = classify_comfy_model(loaded)
             name = _model_display_name(loaded)
             size_mb = _model_size_mb(loaded)
             snapshot.append((kind, name, size_mb, loaded))
             if (not unload_clip_with_image) and kind in ("clip", "vae"):
-                keep_loaded.append(loaded)
+                kept.append((kind, name, size_mb, loaded))
+            else:
+                targets.append((kind, name, size_mb, loaded))
 
         before_desc = ", ".join(_fmt_item(k, n, s) for k, n, s, _ in snapshot) or "-"
-        scope = "all" if unload_clip_with_image else "main_only"
+        scope = "all_soft" if unload_clip_with_image else "main_soft"
         print(
-            f"{PROCESS_PREFIX} Comfy 显存卸载准备 | scope:{scope} | 已加载[{before}]: {before_desc} "
-            f"| LLM申报:{llm_need_mb:.0f}MB({llm_note}) | {_fmt_vram(vram_before)} | {reason}",
+            f"{PROCESS_PREFIX} Comfy 软卸载准备 | scope:{scope} | 已加载[{before_count}]: {before_desc} "
+            f"| {_fmt_vram(vram_before)} | {reason}",
             flush=True,
         )
 
-        device = _primary_torch_device(mm)
-        freed_models = []
-        need = float(llm_need)
+        # Soft-offload largest first so VRAM frees early for the LLM.
+        targets_sorted = sorted(
+            targets,
+            key=lambda item: float(item[2] or 0.0),
+            reverse=True,
+        )
 
-        if unload_clip_with_image:
-            if hasattr(mm, "unload_all_models"):
-                mm.unload_all_models()
-            elif device is not None:
-                freed_models = list(mm.free_memory(1e30, device) or [])
-            else:
-                print(f"{WARN_PREFIX} Comfy unload skipped | no torch device", flush=True)
-                return False
-            unloaded_items = [_fmt_item(k, n, s) for k, n, s, _ in snapshot]
-            kept_items = []
-        else:
-            if device is None:
-                print(f"{WARN_PREFIX} Comfy unload skipped | no torch device", flush=True)
-                return False
-            try:
-                freed_models = list(mm.free_memory(need, device, keep_loaded=keep_loaded) or [])
-            except TypeError:
-                freed_models = list(mm.free_memory(need, device) or [])
+        unloaded_items: List[str] = []
+        kept_items = [_fmt_item(k, n, s) for k, n, s, _ in kept]
+        method_bits: List[str] = []
+        total_api_freed = 0.0
+        still_hot = 0
 
-            freed_ids = set(id(x) for x in freed_models)
-            unloaded_items = []
-            kept_items = []
-            for kind, name, size_mb, loaded in snapshot:
-                label = _fmt_item(kind, name, size_mb)
-                if id(loaded) in freed_ids:
-                    unloaded_items.append(label)
-                else:
-                    still = any(loaded is x for x in list(loaded_list))
-                    if still:
-                        kept_items.append(label)
-                    else:
-                        unloaded_items.append(label)
+        for kind, name, size_mb, loaded in targets_sorted:
+            # Always fully soft-offload selected models (main / optional clip+vae).
+            # Using free_memory(need) would detach when need >= model size.
+            want = _model_loaded_bytes(loaded) + 64.0 * 1024.0 * 1024.0
+            freed_b, tag = _soft_offload_one(loaded, mm, want)
+            total_api_freed += freed_b
+            after_mb = _model_size_mb(loaded)
+            label = _fmt_item(kind, name, size_mb)
+            after_label = f"{label}->VRAM余{after_mb:.1f}MB" if after_mb is not None else label
+            unloaded_items.append(after_label)
+            method_bits.append(f"{name}:{tag}")
+            if (after_mb or 0) > 64.0:
+                still_hot += 1
 
         _soft_empty_cache(mm)
         gc.collect()
         _soft_empty_cache(mm)
 
-        after = len(loaded_list)
+        after_count = len(loaded_list)
         vram_after = _vram_stats_mb()
         freed_used = None
         if vram_before and vram_after:
             freed_used = vram_before["used"] - vram_after["used"]
 
-        begin_llm_vram_session(
-            service_id,
-            llm_model,
-            (vram_after or vram_before or {}).get("free_bytes"),
-            (vram_after or vram_before or {}).get("used_bytes"),
-        )
-
         unloaded_text = ", ".join(unloaded_items) if unloaded_items else "无"
         kept_text = ", ".join(kept_items) if kept_items else "无"
         freed_txt = f"释放约:{freed_used:.0f}MB" if freed_used is not None else "释放约:n/a"
-        if unload_clip_with_image:
-            api_txt = "api:unload_all_models"
-        else:
-            api_txt = f"free_memory返回:{len(freed_models)} 申报需空闲:{llm_need_mb:.0f}MB({llm_note})"
+        api_txt = (
+            f"api:partially_unload_to_cpu keep_loaded=1 "
+            f"api_freed:{(total_api_freed / (1024.0 * 1024.0)):.0f}MB "
+        )
+        methods_txt = "; ".join(method_bits) if method_bits else "-"
 
         print(
-            f"{PROCESS_PREFIX} Comfy 显存已卸载 | scope:{scope} | {api_txt} "
+            f"{PROCESS_PREFIX} Comfy 软卸载完成 | scope:{scope} | {api_txt} "
             f"| 卸下[{len(unloaded_items)}]: {unloaded_text} "
-            f"| 保留[{len(kept_items)}]: {kept_text} | before:{before} after:{after} "
-            f"| {freed_txt} | 前[{_fmt_vram(vram_before)}] -> 后[{_fmt_vram(vram_after)}] | {reason}",
+            f"| 保留[{len(kept_items)}]: {kept_text} | list:{before_count}->{after_count} "
+            f"| {freed_txt} | 前[{_fmt_vram(vram_before)}] -> 后[{_fmt_vram(vram_after)}] "
+            f"| methods: {methods_txt} | {reason}",
             flush=True,
         )
-        if freed_used is not None and freed_used < 256 and before == after and not unload_clip_with_image:
+
+        if after_count < before_count:
             print(
-                f"{WARN_PREFIX} free_memory 未卸下模型（{freed_used:.0f}MB）。"
-                f"可能当前空闲已满足 LLM 申报，或请开启「CLIP随主模型卸载」。",
+                f"{WARN_PREFIX} 软卸载后 loaded 列表变短 ({before_count}->{after_count})，"
+                f"可能有路径触发了 detach；下次重载或将重新读盘。",
+                flush=True,
+            )
+        if freed_used is not None and freed_used < 256 and targets_sorted:
+            print(
+                f"{WARN_PREFIX} 软卸载后显存几乎未下降（{freed_used:.0f}MB）。"
+                f"可尝试开启设置「CLIP随主模型卸载」。仍热模型数:{still_hot}",
                 flush=True,
             )
         return True
@@ -462,17 +582,3 @@ def prepare_for_local_llm(
     )
 
 
-def note_llm_loaded_vram(
-    model: Optional[str] = None,
-    service_id: Optional[str] = None,
-) -> None:
-    """Sample VRAM while local LLM is loaded; persist measured size."""
-    from .llm_vram_cache import record_llm_vram_after_load
-
-    stats = _vram_stats_mb() or {}
-    record_llm_vram_after_load(
-        service_id=service_id,
-        model=model,
-        free_bytes_now=stats.get("free_bytes"),
-        used_bytes_now=stats.get("used_bytes"),
-    )

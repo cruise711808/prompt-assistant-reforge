@@ -214,11 +214,6 @@ class LLMService(OpenAICompatibleService):
                     include_reasoning=not filter_thinking_output,
                 )
             finally:
-                try:
-                    from ..utils.local_model_switch import note_llm_loaded_vram
-                    note_llm_loaded_vram(model=model, service_id="ollama")
-                except Exception:
-                    pass
                 if auto_unload:
                     try:
                         await cls._unload_ollama_model(model, {"base_url": native_base, "auto_unload": True, "type": "ollama", "unload_backend": "ollama"})

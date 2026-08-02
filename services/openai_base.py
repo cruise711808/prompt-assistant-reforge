@@ -319,7 +319,8 @@ class OpenAICompatibleService(BaseAPIService):
                             full_content = ""
                             reasoning_content = ""
                             stream_error = None  # 用于捕获流内错误
-                            
+
+
                             async for line in response.aiter_lines():
                                 # 此处的循环检查依然保留，作为双重保险
                                 if cancel_event is not None and cancel_event.is_set():
@@ -497,11 +498,6 @@ class OpenAICompatibleService(BaseAPIService):
                             service_config["provider"] = provider_key
                         if auto_unload is not None:
                             service_config["auto_unload"] = auto_unload
-                        try:
-                            from ..utils.local_model_switch import note_llm_loaded_vram
-                            note_llm_loaded_vram(model=model, service_id=provider_key)
-                        except Exception:
-                            pass
                         if service_supports_auto_unload(service_config):
                             await cls._unload_ollama_model(model, service_config)
                     except Exception:
@@ -534,11 +530,6 @@ class OpenAICompatibleService(BaseAPIService):
                     service_config["provider"] = provider_key
                 if auto_unload is not None:
                     service_config["auto_unload"] = auto_unload
-                try:
-                    from ..utils.local_model_switch import note_llm_loaded_vram
-                    note_llm_loaded_vram(model=model, service_id=provider_key)
-                except Exception:
-                    pass
                 if service_supports_auto_unload(service_config):
                     await cls._unload_ollama_model(model, service_config)
             except Exception:
