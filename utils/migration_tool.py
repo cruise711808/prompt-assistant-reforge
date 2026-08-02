@@ -1,4 +1,4 @@
-﻿"""
+"""
 数据迁移工具
 
 用于处理旧版本配置文件到新版本的迁移
@@ -560,7 +560,7 @@ class MigrationTool:
             user_service['unload_backend'] = 'llama_swap'
             if 'auto_unload' not in user_service:
                 user_service['auto_unload'] = True
-user_service_ids.add('llama_swap')
+            user_service_ids.add('llama_swap')
             user_service_ids.discard('service_355')
             # 同步 current_services 中的旧 service_355 引用
             current_services = user_config.get('current_services') or {}

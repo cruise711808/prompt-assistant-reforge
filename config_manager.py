@@ -1,4 +1,4 @@
-﻿import os
+import os
 import json
 import csv
 import tempfile
@@ -134,7 +134,7 @@ class ConfigManager:
         """
         template_path = os.path.join(self.templates_dir, f"{template_name}_template.json")
         try:
-            with open(template_path, "r", encoding="utf-8") as f:
+            with open(template_path, "r", encoding="utf-8-sig") as f:
                 data = json.load(f)
                 # 获取版本号并保存，用于后续比对
                 template_version = data.get("__config_version", "2.0")
@@ -257,7 +257,7 @@ class ConfigManager:
     def load_config(self):
         """加载配置文件"""
         try:
-            with open(self.config_path, "r", encoding="utf-8") as f:
+            with open(self.config_path, "r", encoding="utf-8-sig") as f:
                 return json.load(f)
         except Exception as e:
             self._log(f"加载配置文件失败: {str(e)}")
@@ -270,7 +270,7 @@ class ConfigManager:
     def load_system_prompts(self):
         """加载系统提示词配置"""
         try:
-            with open(self.system_prompts_path, "r", encoding="utf-8") as f:
+            with open(self.system_prompts_path, "r", encoding="utf-8-sig") as f:
                 return json.load(f)
         except Exception as e:
             self._log(f"加载系统提示词配置失败: {str(e)}")
@@ -283,7 +283,7 @@ class ConfigManager:
     def load_active_prompts(self):
         """加载激活的提示词配置"""
         try:
-            with open(self.active_prompts_path, "r", encoding="utf-8") as f:
+            with open(self.active_prompts_path, "r", encoding="utf-8-sig") as f:
                 return json.load(f)
         except Exception as e:
             self._log(f"加载激活的提示词配置失败: {str(e)}")
@@ -296,7 +296,7 @@ class ConfigManager:
     def load_user_tags(self):
         """加载用户标签配置"""
         try:
-            with open(self.tags_user_path, "r", encoding="utf-8") as f:
+            with open(self.tags_user_path, "r", encoding="utf-8-sig") as f:
                 return json.load(f)
         except Exception as e:
             self._log(f"加载用户标签配置失败: {str(e)}")
@@ -309,7 +309,7 @@ class ConfigManager:
     def load_kontext_presets(self):
         """加载Kontext预设配置"""
         try:
-            with open(self.kontext_presets_path, "r", encoding="utf-8") as f:
+            with open(self.kontext_presets_path, "r", encoding="utf-8-sig") as f:
                 return json.load(f)
         except Exception as e:
             self._log(f"加载Kontext预设配置失败: {str(e)}")

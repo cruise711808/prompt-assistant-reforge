@@ -1,4 +1,4 @@
-﻿"""
+"""
 VLM服务 - 重构版本
 提供视觉模型的图像分析功能
 继承OpenAICompatibleService以复用通用逻辑

@@ -1,4 +1,4 @@
-﻿"""
+"""
 LLM服务 - 重构版本
 提供大语言模型的扩写和翻译功能
 继承OpenAICompatibleService以复用通用逻辑

@@ -1,4 +1,4 @@
-﻿"""
+"""
 Local model unload helpers for Ollama and llama-swap.
 """
 

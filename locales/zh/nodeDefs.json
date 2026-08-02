@@ -1,4 +1,4 @@
-﻿{
+{
     "PromptExpand": {
         "display_name": "提示词优化",
         "description": "使用LLM增强或扩写您的提示词",

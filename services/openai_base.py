@@ -1,4 +1,4 @@
-﻿"""
+"""
 OpenAI兼容服务基类
 为LLM和VLM服务提供统一的OpenAI兼容API处理逻辑
 """
