@@ -23,17 +23,21 @@
                 "name": "LLM Servisi",
                 "tooltip": "LLM Servisini Seçin"
             },
-            "ollama_auto_unload": {
-                "name": "Otomatik Yüklemeyi Kaldır",
-                "tooltip": "Ollama modelini otomatik olarak kaldır"
+            "unload_language_model": {
+                "name": "Dil modelini boşalt",
+                "tooltip": "Üretimden sonra yerel dil modelini (Ollama / llama-swap) boşalt"
             },
-            "source_text": {
-                "name": "Kaynak Metin",
-                "tooltip": "İsteğe bağlı metin girişi"
+            "unload_image_model": {
+                "name": "Görüntü modelini boşalt",
+                "tooltip": "Yerel LLM/VLM öncesi ComfyUI görüntü modellerini boşalt"
             },
             "seed": {
                 "name": "Tohum",
                 "tooltip": "Üretimin rastgeleliğini kontrol eder. Yeniden yürütmeyi zorlamak için sabit olmayan bir mod seçin"
+            },
+            "source_text": {
+                "name": "Kaynak Metin",
+                "tooltip": "İsteğe bağlı metin girişi"
             }
         },
         "outputs": {
@@ -71,9 +75,13 @@
                 "name": "VLM Servisi",
                 "tooltip": "VLM Servisini Seçin"
             },
-            "ollama_auto_unload": {
-                "name": "Otomatik Yüklemeyi Kaldır",
-                "tooltip": "Ollama modelini otomatik olarak kaldır"
+            "unload_language_model": {
+                "name": "Dil modelini boşalt",
+                "tooltip": "Üretimden sonra yerel dil modelini (Ollama / llama-swap) boşalt"
+            },
+            "unload_image_model": {
+                "name": "Görüntü modelini boşalt",
+                "tooltip": "Yerel LLM/VLM öncesi ComfyUI görüntü modellerini boşalt"
             },
             "seed": {
                 "name": "Tohum",
@@ -111,9 +119,13 @@
                 "name": "Çeviri Servisi",
                 "tooltip": "Çeviri servisini seçin"
             },
-            "ollama_auto_unload": {
-                "name": "Otomatik Yüklemeyi Kaldır",
-                "tooltip": "Ollama modelini otomatik olarak kaldır"
+            "unload_language_model": {
+                "name": "Dil modelini boşalt",
+                "tooltip": "Üretimden sonra yerel dil modelini (Ollama / llama-swap) boşalt"
+            },
+            "unload_image_model": {
+                "name": "Görüntü modelini boşalt",
+                "tooltip": "Yerel LLM/VLM öncesi ComfyUI görüntü modellerini boşalt"
             },
             "seed": {
                 "name": "Tohum",
@@ -151,6 +163,18 @@
                 "name": "VLM Servisi",
                 "tooltip": "VLM Servisini Seçin"
             },
+            "unload_language_model": {
+                "name": "Dil modelini boşalt",
+                "tooltip": "Üretimden sonra yerel dil modelini (Ollama / llama-swap) boşalt"
+            },
+            "unload_image_model": {
+                "name": "Görüntü modelini boşalt",
+                "tooltip": "Yerel LLM/VLM öncesi ComfyUI görüntü modellerini boşalt"
+            },
+            "seed": {
+                "name": "Tohum",
+                "tooltip": "Üretimin rastgeleliğini kontrol eder. Yeniden yürütmeyi zorlamak için sabit olmayan bir mod seçin"
+            },
             "sampling_mode": {
                 "name": "Örnekleme Modu",
                 "tooltip": "Kareleri videonun uzunluğuna göre eşit örneklemek için Auto (Uniform) seçeneğini belirleyin. Manual seçeneği, kareleri manuel olarak seçmenizi sağlar",
@@ -167,17 +191,9 @@
                 "name": "Manuel İndeksler",
                 "tooltip": "Belirli kare indeksleri (Manuel Mod)"
             },
-            "ollama_auto_unload": {
-                "name": "Otomatik Yüklemeyi Kaldır",
-                "tooltip": "Ollama modelini otomatik olarak kaldır"
-            },
             "video": {
                 "name": "Video",
                 "tooltip": "Girdi videosu"
-            },
-            "seed": {
-                "name": "Tohum",
-                "tooltip": "Üretimin rastgeleliğini kontrol eder. Yeniden yürütmeyi zorlamak için sabit olmayan bir mod seçin"
             },
             "video_frames": {
                 "name": "Görüntüler",
@@ -214,10 +230,6 @@
             "vlm_service": {
                 "name": "VLM Servisi",
                 "tooltip": "VLM Servisini Seçin"
-            },
-            "ollama_auto_unload": {
-                "name": "Otomatik Yüklemeyi Kaldır",
-                "tooltip": "Ollama modelini otomatik olarak kaldır"
             },
             "seed": {
                 "name": "Tohum",

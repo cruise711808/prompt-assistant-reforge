@@ -956,6 +956,19 @@ export async function registerSettings() {
                     }
                 },
 
+                // CLIP/VAE 是否与图像主模型一起卸载（节点侧读取此全局设置）
+                {
+                    id: "PromptAssistant.Settings.UnloadClipWithImage",
+                    name: "CLIP随主模型卸载",
+                    category: ["提示词小助手", "系统", "CLIP随主模型卸载"],
+                    type: "boolean",
+                    defaultValue: false,
+                    tooltip: "开启后：调用本地大模型前卸载图像模型时，连同 CLIP/VAE 一起卸载；关闭则只卸主模型并保留 CLIP/VAE。默认关闭。",
+                    onChange: (value) => {
+                        logger.log(`CLIP随主模型卸载 - 已${value ? "启用" : "禁用"}`);
+                    }
+                },
+
                 // 流式输出开关
                 {
                     id: "PromptAssistant.Settings.EnableStreaming",
@@ -1195,8 +1208,8 @@ export async function registerSettings() {
                         authorTag.style.display = "flex";
                         authorTag.style.alignItems = "center";
                         const authorBadge = document.createElement("img");
-                        authorBadge.alt = "Prompt Assistant Reforge · Helpful Old Wang";
-                        authorBadge.src = "https://img.shields.io/badge/Publisher-Helpful%20Old%20Wang-blue?style=flat&label=Prompt%20Assistant%20Reforge&labelColor=%23555555&color=%23007ec6";
+                        authorBadge.alt = "Prompt Assistant Reforge · 热心的老王";
+                        authorBadge.src = "https://img.shields.io/badge/%E7%83%AD%E5%BF%83%E7%9A%84%E8%80%81%E7%8E%8B-blue?style=flat&label=Prompt%20Assistant%20Reforge&labelColor=%23555555&color=%23007ec6";
                         authorBadge.style.display = "block";
                         authorBadge.style.height = "20px";
                         authorTag.appendChild(authorBadge);

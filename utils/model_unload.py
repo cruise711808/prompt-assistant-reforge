@@ -5,6 +5,7 @@ Local model unload helpers for Ollama and llama-swap.
 from __future__ import annotations
 
 import asyncio
+import json
 from typing import Any, Dict, Optional
 from urllib.parse import quote
 
@@ -80,6 +81,15 @@ async def wait_before_unload(delay_seconds: float = UNLOAD_DELAY_SECONDS) -> Non
         await asyncio.sleep(delay_seconds)
 
 
+def _fmt_payload(payload: Optional[Dict[str, Any]]) -> str:
+    if not payload:
+        return "-"
+    try:
+        return json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+    except Exception:
+        return str(payload)
+
+
 async def unload_local_model(model: str, provider_config: Optional[Dict[str, Any]] = None) -> None:
     """
     Unload a local model to free VRAM/memory when supported.
@@ -87,16 +97,17 @@ async def unload_local_model(model: str, provider_config: Optional[Dict[str, Any
     - Ollama: POST /api/generate {"model": ..., "keep_alive": 0}
     - llama-swap: POST /api/models/unload/{model}
     """
+    from .common import PROCESS_PREFIX, WARN_PREFIX
+
     provider_config = provider_config or {}
     backend = resolve_unload_backend(provider_config)
     if not backend:
         return
 
     auto_unload = provider_config.get("auto_unload", True)
+    label = "Ollama" if backend == "ollama" else "llama-swap"
     if auto_unload is False:
-        from .common import PROCESS_PREFIX
-        label = "Ollama" if backend == "ollama" else "llama-swap"
-        print(f"{PROCESS_PREFIX} {label} model kept loaded | model:{model}")
+        print(f"{PROCESS_PREFIX} {label} model kept loaded | model:{model}", flush=True)
         return
 
     await wait_before_unload()
@@ -109,9 +120,19 @@ async def unload_local_model(model: str, provider_config: Optional[Dict[str, Any
             if backend == "ollama":
                 url = f"{root}/api/generate"
                 payload = {"model": model, "keep_alive": 0}
+                print(
+                    f"{PROCESS_PREFIX} {label} unload signal | POST {url} | body:{_fmt_payload(payload)}",
+                    flush=True,
+                )
                 response = await client.post(url, json=payload)
                 ok = response.status_code == 200
-                label = "Ollama"
+                detail = f"status:{response.status_code}"
+                try:
+                    body_preview = (response.text or "").strip().replace("\n", " ")
+                    if body_preview:
+                        detail += f" | resp:{body_preview[:120]}"
+                except Exception:
+                    pass
             else:
                 # Prefer model-specific unload; fall back to unload-all.
                 encoded_model = quote(str(model or "").strip(), safe="")
@@ -121,23 +142,49 @@ async def unload_local_model(model: str, provider_config: Optional[Dict[str, Any
                 urls.append(f"{root}/api/models/unload")
                 ok = False
                 last_status = None
+                used_url = None
+                resp_preview = ""
                 for url in urls:
+                    print(
+                        f"{PROCESS_PREFIX} {label} unload signal | POST {url} | body:- | model:{model}",
+                        flush=True,
+                    )
                     response = await client.post(url)
                     last_status = response.status_code
+                    used_url = url
+                    try:
+                        resp_preview = (response.text or "").strip().replace("\n", " ")[:120]
+                    except Exception:
+                        resp_preview = ""
                     if 200 <= response.status_code < 300:
                         ok = True
                         break
-                label = "llama-swap"
+                    print(
+                        f"{WARN_PREFIX} {label} unload attempt failed | POST {url} | status:{response.status_code}"
+                        + (f" | resp:{resp_preview}" if resp_preview else ""),
+                        flush=True,
+                    )
+                detail = f"status:{last_status} | url:{used_url}"
+                if resp_preview:
+                    detail += f" | resp:{resp_preview}"
                 if not ok and last_status is not None:
                     raise RuntimeError(f"HTTP {last_status}")
 
             if ok:
-                from .common import PROCESS_PREFIX
-                print(f"{PROCESS_PREFIX} {label} model unloaded | model:{model}")
+                print(
+                    f"{PROCESS_PREFIX} {label} model unloaded | model:{model} | {detail}",
+                    flush=True,
+                )
+            else:
+                print(
+                    f"{WARN_PREFIX} {label} unload failed (ignored) | model:{model} | {detail}",
+                    flush=True,
+                )
     except Exception as e:
-        from .common import WARN_PREFIX
-        label = "Ollama" if backend == "ollama" else "llama-swap"
-        print(f"{WARN_PREFIX} {label} unload failed (ignored) | model:{model} | error:{str(e)[:80]}")
+        print(
+            f"{WARN_PREFIX} {label} unload failed (ignored) | model:{model} | error:{str(e)[:120]}",
+            flush=True,
+        )
 
 
 # Backward-compatible aliases used by older import sites.

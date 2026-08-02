@@ -23,17 +23,21 @@
                 "name": "LLM服务",
                 "tooltip": "选择LLM服务和模型"
             },
-            "ollama_auto_unload": {
-                "name": "自动释放显存",
-                "tooltip": "生成完成后自动释放Ollama模型显存"
+            "unload_language_model": {
+                "name": "卸载语言模型",
+                "tooltip": "生成完成后卸载本地语言模型（Ollama / llama-swap），释放显存"
             },
-            "source_text": {
-                "name": "原文输入",
-                "tooltip": "可选的输入文本"
+            "unload_image_model": {
+                "name": "卸载图像模型",
+                "tooltip": "调用本地大模型前，先卸载 ComfyUI 图像模型，释放显存给语言/视觉模型"
             },
             "seed": {
                 "name": "随机种子",
                 "tooltip": "控制生成的随机性。选择非固定模式可强制节点重新执行"
+            },
+            "source_text": {
+                "name": "原文输入",
+                "tooltip": "可选的输入文本"
             }
         },
         "outputs": {
@@ -71,9 +75,13 @@
                 "name": "视觉服务",
                 "tooltip": "选择视觉服务和模型"
             },
-            "ollama_auto_unload": {
-                "name": "自动释放显存",
-                "tooltip": "生成完成后自动释放Ollama模型显存"
+            "unload_language_model": {
+                "name": "卸载语言模型",
+                "tooltip": "生成完成后卸载本地语言模型（Ollama / llama-swap），释放显存"
+            },
+            "unload_image_model": {
+                "name": "卸载图像模型",
+                "tooltip": "调用本地大模型前，先卸载 ComfyUI 图像模型，释放显存给语言/视觉模型"
             },
             "seed": {
                 "name": "随机种子",
@@ -111,9 +119,13 @@
                 "name": "翻译服务",
                 "tooltip": "选择翻译服务和模型"
             },
-            "ollama_auto_unload": {
-                "name": "自动释放显存",
-                "tooltip": "生成完成后自动释放Ollama模型显存"
+            "unload_language_model": {
+                "name": "卸载语言模型",
+                "tooltip": "生成完成后卸载本地语言模型（Ollama / llama-swap），释放显存"
+            },
+            "unload_image_model": {
+                "name": "卸载图像模型",
+                "tooltip": "调用本地大模型前，先卸载 ComfyUI 图像模型，释放显存给语言/视觉模型"
             },
             "seed": {
                 "name": "随机种子",
@@ -151,6 +163,18 @@
                 "name": "视觉服务",
                 "tooltip": "选择视觉服务和模型"
             },
+            "unload_language_model": {
+                "name": "卸载语言模型",
+                "tooltip": "生成完成后卸载本地语言模型（Ollama / llama-swap），释放显存"
+            },
+            "unload_image_model": {
+                "name": "卸载图像模型",
+                "tooltip": "调用本地大模型前，先卸载 ComfyUI 图像模型，释放显存给语言/视觉模型"
+            },
+            "seed": {
+                "name": "随机种子",
+                "tooltip": "控制生成的随机性。选择非固定模式可强制节点重新执行"
+            },
             "sampling_mode": {
                 "name": "抽帧策略",
                 "tooltip": "选择Auto (Uniform)将按照视频长度，均匀抽帧。Manual (Indices)模式，可通过“🎬选取反推帧”按钮手动选择帧",
@@ -167,10 +191,6 @@
                 "name": "手动帧索引",
                 "tooltip": "指定帧索引，支持逗号分隔或范围 (手动模式)"
             },
-            "ollama_auto_unload": {
-                "name": "自动释放显存",
-                "tooltip": "生成完成后自动释放Ollama模型显存"
-            },
             "video": {
                 "name": "视频",
                 "tooltip": "输入视频"
@@ -178,10 +198,6 @@
             "video_frames": {
                 "name": "图像",
                 "tooltip": "输入图像序列（IMAGE batch）"
-            },
-            "seed": {
-                "name": "随机种子",
-                "tooltip": "控制生成的随机性。选择非固定模式可强制节点重新执行"
             }
         },
         "outputs": {
@@ -214,10 +230,6 @@
             "vlm_service": {
                 "name": "视觉服务",
                 "tooltip": "选择视觉服务和模型"
-            },
-            "ollama_auto_unload": {
-                "name": "自动释放显存",
-                "tooltip": "生成完成后自动释放Ollama模型显存"
             },
             "seed": {
                 "name": "随机种子",

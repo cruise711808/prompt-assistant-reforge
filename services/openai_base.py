@@ -85,6 +85,7 @@ class OpenAICompatibleService(BaseAPIService):
         thinking_keys = [
             "thinking", "enable_thinking", "reasoning_effort", 
             "reasoning", "thinking_level", "think",
+            "chat_template_kwargs",
             "response_format",  # BUG-02 修复：Level-1 一并移除，防止部分服务商拒绝该字段
         ]
         for k in thinking_keys:
@@ -149,6 +150,7 @@ class OpenAICompatibleService(BaseAPIService):
         filter_thinking_output: bool = True,
         provider_id: Optional[str] = None,
         auto_unload: Optional[bool] = None,
+        force_max_tokens: bool = False,
     ) -> Dict[str, Any]:
         """
         使用HTTP直连调用/chat/completions接口
@@ -192,6 +194,10 @@ class OpenAICompatibleService(BaseAPIService):
                 else:
                     initial_payload["max_tokens"] = max_tokens
 
+            elif force_max_tokens:
+                # 只限制输出长度，不覆盖服务端 temperature/top_p 默认值
+                initial_payload["max_tokens"] = max(1, int(max_tokens or 2000))
+
             # 特性高级参数：仅当值不为 None 时才传递（留空=不维护）
             if enable_advanced_params:
                 if top_k is not None:
@@ -206,6 +212,23 @@ class OpenAICompatibleService(BaseAPIService):
             # 添加思维链控制参数
             if thinking_extra:
                 initial_payload.update(thinking_extra)
+
+            # 调试：打印出站请求关键字段（不含完整 messages）
+            try:
+                _dbg = {
+                    "url": url,
+                    "model": initial_payload.get("model"),
+                    "stream": initial_payload.get("stream"),
+                    "max_tokens": initial_payload.get("max_tokens"),
+                    "enable_thinking": initial_payload.get("enable_thinking", "<absent>"),
+                    "chat_template_kwargs": initial_payload.get("chat_template_kwargs", "<absent>"),
+                    "thinking": initial_payload.get("thinking", "<absent>"),
+                    "message_count": len(initial_payload.get("messages") or []),
+                    "keys": sorted(list(initial_payload.keys())),
+                }
+                print(f"{PROCESS_PREFIX} chat请求格式 | {json.dumps(_dbg, ensure_ascii=False)}", flush=True)
+            except Exception:
+                pass
 
             # 构建请求头
             headers = {"Content-Type": "application/json"}
@@ -382,12 +405,19 @@ class OpenAICompatibleService(BaseAPIService):
                             if not final_content.strip():
                                 pbar.error("响应内容为空")
                                 # --- 调试日志 (1级): 警告响应内容为空 ---
-                                print(f"\n{WARN_PREFIX} [API响应调试] 模型:{model} | 状态:成功 | 但最终内容为空字符串，触发降级重试", flush=True)
+                                _reason_len = len(reasoning_content or "")
+                                print(
+                                    f"\n{WARN_PREFIX} [API响应调试] 模型:{model} | 状态:成功 | "
+                                    f"content为空 | reasoning字符:{_reason_len} | "
+                                    f"不触发参数降级重试（避免移除关思考参数）",
+                                    flush=True,
+                                )
                                 return {
                                     "success": False,
                                     "error": "API returned empty content",
                                     "status_code": 200,
-                                    "should_retry": True
+                                    "should_retry": False,
+                                    "reasoning_chars": _reason_len,
                                 }
                             
                             pbar.done(char_count=len(final_content), elapsed_ms=elapsed_ms)
@@ -467,6 +497,11 @@ class OpenAICompatibleService(BaseAPIService):
                             service_config["provider"] = provider_key
                         if auto_unload is not None:
                             service_config["auto_unload"] = auto_unload
+                        try:
+                            from ..utils.local_model_switch import note_llm_loaded_vram
+                            note_llm_loaded_vram(model=model, service_id=provider_key)
+                        except Exception:
+                            pass
                         if service_supports_auto_unload(service_config):
                             await cls._unload_ollama_model(model, service_config)
                     except Exception:
@@ -483,6 +518,32 @@ class OpenAICompatibleService(BaseAPIService):
                     break # 非400错误（如401, 500等），不进行降级重试，直接返回错误
             
             # 所有重试耗尽或非可重试错误
+            # 本地后端：失败/空内容后也尝试卸载，避免占着显存影响下一轮图像或重试
+            try:
+                from ..config_manager import config_manager
+                provider_key = provider_id or provider_display_name
+                service_config = config_manager.get_service(provider_key)
+                if not service_config:
+                    for svc in (config_manager.load_config().get("model_services") or []):
+                        if svc.get("id") == provider_key or svc.get("name") == provider_display_name:
+                            service_config = svc
+                            break
+                service_config = dict(service_config or {})
+                service_config["base_url"] = base_url
+                if "provider" not in service_config and provider_key:
+                    service_config["provider"] = provider_key
+                if auto_unload is not None:
+                    service_config["auto_unload"] = auto_unload
+                try:
+                    from ..utils.local_model_switch import note_llm_loaded_vram
+                    note_llm_loaded_vram(model=model, service_id=provider_key)
+                except Exception:
+                    pass
+                if service_supports_auto_unload(service_config):
+                    await cls._unload_ollama_model(model, service_config)
+            except Exception:
+                pass
+
             if 'pbar' in locals() and pbar:
                 pbar.error(last_error_msg)
             return {"success": False, "error": last_error_msg}

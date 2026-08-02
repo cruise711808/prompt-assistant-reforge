@@ -214,13 +214,16 @@ class LLMService(OpenAICompatibleService):
                     include_reasoning=not filter_thinking_output,
                 )
             finally:
+                try:
+                    from ..utils.local_model_switch import note_llm_loaded_vram
+                    note_llm_loaded_vram(model=model, service_id="ollama")
+                except Exception:
+                    pass
                 if auto_unload:
                     try:
                         await cls._unload_ollama_model(model, {"base_url": native_base, "auto_unload": True, "type": "ollama", "unload_backend": "ollama"})
                     except:
                         pass
-        
-        # 关键修复：单独捕获外层 CancelledError，确保 pbar 被正确停止
         except asyncio.CancelledError:
             if 'pbar' in locals() and pbar:
                 pbar.cancel(f"{WARN_PREFIX} 任务被外部取消 | 服务:Ollama")
@@ -421,7 +424,19 @@ class LLMService(OpenAICompatibleService):
             enable_advanced_params = service.get('enable_advanced_params', False) if service else False
             filter_thinking_output = service.get('filter_thinking_output', True) if service else True
             effective_filter_thinking_output = filter_thinking_output or disable_thinking_enabled
-            thinking_extra = build_thinking_suppression(provider, model) if disable_thinking_enabled else None
+            provider_type_for_thinking = (service.get("type") or provider) if service else provider
+            thinking_extra = build_thinking_suppression(provider_type_for_thinking, model, disable_thinking=disable_thinking_enabled) if disable_thinking_enabled else None
+
+            # 本地 llama-swap/Ollama：即使未开高级参数也强制 max_tokens，防止思考链无上限狂奔
+            _svc_type = (service.get("type") or "").lower() if service else ""
+            _unload_backend = (service.get("unload_backend") or "").lower() if service else ""
+            _svc_id = ((service.get("id") if service else None) or provider or "").lower()
+            force_max_tokens = (
+                _unload_backend in ("llama_swap", "ollama")
+                or _svc_type == "ollama"
+                or _svc_id in ("llama_swap", "ollama")
+                or "llama-swap" in (((service.get("name") if service else None) or "").lower())
+            )
 
             result = await LLMService._http_request_chat_completions(
                 base_url=base_url,
@@ -450,6 +465,7 @@ class LLMService(OpenAICompatibleService):
                     if custom_provider_config and 'auto_unload' in custom_provider_config
                     else (service.get('auto_unload') if service else None)
                 ),
+                force_max_tokens=force_max_tokens,
                 )
 
             if result["success"]:
@@ -542,7 +558,8 @@ class LLMService(OpenAICompatibleService):
             
             # 检测是否关闭思维链
             disable_thinking_enabled = service.get('disable_thinking', True) if service else True
-            _thinking_extra = build_thinking_suppression(provider, model) if disable_thinking_enabled else None
+            _thinking_provider = (service.get("type") or provider) if service else provider
+            _thinking_extra = build_thinking_suppression(_thinking_provider, model, disable_thinking=disable_thinking_enabled) if disable_thinking_enabled else None
             thinking_disabled = _thinking_extra is not None and disable_thinking_enabled
             model_display = format_model_with_thinking(model, thinking_disabled)
 
@@ -686,6 +703,17 @@ class LLMService(OpenAICompatibleService):
             effective_filter_thinking_output = filter_thinking_output or disable_thinking_enabled
             thinking_extra = _thinking_extra # 复用前面计算好的 suppression
             
+            # 本地 llama-swap/Ollama：即使未开高级参数也强制 max_tokens，防止思考链无上限狂奔
+            _svc_type = (service.get("type") or "").lower() if service else ""
+            _unload_backend = (service.get("unload_backend") or "").lower() if service else ""
+            _svc_id = ((service.get("id") if service else None) or provider or "").lower()
+            force_max_tokens = (
+                _unload_backend in ("llama_swap", "ollama")
+                or _svc_type == "ollama"
+                or _svc_id in ("llama_swap", "ollama")
+                or "llama-swap" in (((service.get("name") if service else None) or "").lower())
+            )
+
             result = await LLMService._http_request_chat_completions(
                 base_url=base_url,
                 api_key=api_key,
@@ -713,6 +741,7 @@ class LLMService(OpenAICompatibleService):
                     if custom_provider_config and 'auto_unload' in custom_provider_config
                     else (service.get('auto_unload') if service else None)
                 ),
+                force_max_tokens=force_max_tokens,
                 )
 
             if result["success"]:

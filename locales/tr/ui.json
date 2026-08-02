@@ -367,5 +367,7 @@
   "帧数已截断": "⚠️ Kareler kırpıldı",
   "帧数截断详情": "Model en fazla {max} kare destekliyor, {truncated} kare yok sayıldı",
   "建议不要在地址后方添加 /v1。不加 /v1 会走原生 Ollama API，加了 /v1 则会走 OpenAI 兼容请求格式。": "Gerekmedikçe adresin sonuna /v1 eklememeniz önerilir. /v1 olmadan yerel Ollama API kullanılır; /v1 eklenirse OpenAI uyumlu istek biçimi kullanılır.",
-  "建议优先选择非思考模型或指令型（-instruct）模型，以减少思维链输出、截断和响应不稳定的问题。": "Düşünme çıktısını, kesilmeyi ve kararsız yanıtları azaltmak için reasoning içermeyen modelleri veya yönergeye uyarlanmış (-instruct) modelleri tercih edin."
+  "建议优先选择非思考模型或指令型（-instruct）模型，以减少思维链输出、截断和响应不稳定的问题。": "Düşünme çıktısını, kesilmeyi ve kararsız yanıtları azaltmak için reasoning içermeyen modelleri veya yönergeye uyarlanmış (-instruct) modelleri tercih edin.",
+  "CLIP随主模型卸载": "Unload CLIP with Main Model",
+  "开启后：调用本地大模型前卸载图像模型时，连同 CLIP/VAE 一起卸载；关闭则只卸主模型并保留 CLIP/VAE。默认关闭。": "On: when unloading image models before local LLM, also unload CLIP/VAE. Off: unload main model only and keep CLIP/VAE. Default off."
 }

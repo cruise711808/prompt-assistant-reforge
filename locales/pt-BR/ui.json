@@ -367,5 +367,7 @@
   "帧数已截断": "⚠️ Quadros truncados",
   "帧数截断详情": "O modelo suporta no máx. {max} quadros, {truncated} quadro(s) ignorado(s)",
   "建议不要在地址后方添加 /v1。不加 /v1 会走原生 Ollama API，加了 /v1 则会走 OpenAI 兼容请求格式。": "Recomendamos não adicionar /v1 ao final do endereço, a menos que seja necessário. Sem /v1, a API nativa do Ollama é usada; com /v1, é usado o formato de requisição compatível com OpenAI.",
-  "建议优先选择非思考模型或指令型（-instruct）模型，以减少思维链输出、截断和响应不稳定的问题。": "Prefira modelos sem raciocínio ou modelos instrucionais (-instruct) para reduzir saída de cadeia de pensamento, truncamentos e respostas instáveis."
+  "建议优先选择非思考模型或指令型（-instruct）模型，以减少思维链输出、截断和响应不稳定的问题。": "Prefira modelos sem raciocínio ou modelos instrucionais (-instruct) para reduzir saída de cadeia de pensamento, truncamentos e respostas instáveis.",
+  "CLIP随主模型卸载": "Unload CLIP with Main Model",
+  "开启后：调用本地大模型前卸载图像模型时，连同 CLIP/VAE 一起卸载；关闭则只卸主模型并保留 CLIP/VAE。默认关闭。": "On: when unloading image models before local LLM, also unload CLIP/VAE. Off: unload main model only and keep CLIP/VAE. Default off."
 }

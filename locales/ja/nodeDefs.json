@@ -23,17 +23,21 @@
                 "name": "LLMサービス",
                 "tooltip": "LLMサービスを選択"
             },
-            "ollama_auto_unload": {
-                "name": "自動アンロード",
-                "tooltip": "Ollamaモデルを自動的にアンロードします"
+            "unload_language_model": {
+                "name": "言語モデルを解放",
+                "tooltip": "生成後にローカル言語モデル（Ollama / llama-swap）を解放します"
             },
-            "source_text": {
-                "name": "ソーステキスト",
-                "tooltip": "オプションの入力テキスト"
+            "unload_image_model": {
+                "name": "画像モデルを解放",
+                "tooltip": "ローカル LLM/VLM 呼び出し前に ComfyUI 画像モデルを解放します"
             },
             "seed": {
                 "name": "シード",
                 "tooltip": "生成のランダム性を制御します。固定以外のモードを選択すると、再実行が強制されます"
+            },
+            "source_text": {
+                "name": "ソーステキスト",
+                "tooltip": "オプションの入力テキスト"
             }
         },
         "outputs": {
@@ -71,9 +75,13 @@
                 "name": "VLMサービス",
                 "tooltip": "VLMサービスを選択"
             },
-            "ollama_auto_unload": {
-                "name": "自動アンロード",
-                "tooltip": "Ollamaモデルを自動的にアンロードします"
+            "unload_language_model": {
+                "name": "言語モデルを解放",
+                "tooltip": "生成後にローカル言語モデル（Ollama / llama-swap）を解放します"
+            },
+            "unload_image_model": {
+                "name": "画像モデルを解放",
+                "tooltip": "ローカル LLM/VLM 呼び出し前に ComfyUI 画像モデルを解放します"
             },
             "seed": {
                 "name": "シード",
@@ -111,9 +119,13 @@
                 "name": "翻訳サービス",
                 "tooltip": "翻訳サービスを選択"
             },
-            "ollama_auto_unload": {
-                "name": "自動アンロード",
-                "tooltip": "Ollamaモデルを自動的にアンロードします"
+            "unload_language_model": {
+                "name": "言語モデルを解放",
+                "tooltip": "生成後にローカル言語モデル（Ollama / llama-swap）を解放します"
+            },
+            "unload_image_model": {
+                "name": "画像モデルを解放",
+                "tooltip": "ローカル LLM/VLM 呼び出し前に ComfyUI 画像モデルを解放します"
             },
             "seed": {
                 "name": "シード",
@@ -151,6 +163,18 @@
                 "name": "VLMサービス",
                 "tooltip": "VLMサービスを選択"
             },
+            "unload_language_model": {
+                "name": "言語モデルを解放",
+                "tooltip": "生成後にローカル言語モデル（Ollama / llama-swap）を解放します"
+            },
+            "unload_image_model": {
+                "name": "画像モデルを解放",
+                "tooltip": "ローカル LLM/VLM 呼び出し前に ComfyUI 画像モデルを解放します"
+            },
+            "seed": {
+                "name": "シード",
+                "tooltip": "生成のランダム性を制御します。固定以外のモードを選択すると、再実行が強制されます"
+            },
             "sampling_mode": {
                 "name": "サンプリングモード",
                 "tooltip": "動画の長さに応じて均等にフレームをサンプリングするには自動(Uniform)を選択します。手動(Indices)モードでは「🎬キャプション用フレームを選択」ボタンで手動選択が可能です",
@@ -167,17 +191,9 @@
                 "name": "手動インデックス",
                 "tooltip": "特定のフレームインデックス (手動モード)"
             },
-            "ollama_auto_unload": {
-                "name": "自動アンロード",
-                "tooltip": "Ollamaモデルを自動的にアンロードします"
-            },
             "video": {
                 "name": "動画",
                 "tooltip": "入力動画"
-            },
-            "seed": {
-                "name": "シード",
-                "tooltip": "生成のランダム性を制御します。固定以外のモードを選択すると、再実行が強制されます"
             },
             "video_frames": {
                 "name": "画像",
@@ -214,10 +230,6 @@
             "vlm_service": {
                 "name": "VLMサービス",
                 "tooltip": "VLMサービスを選択"
-            },
-            "ollama_auto_unload": {
-                "name": "自動アンロード",
-                "tooltip": "Ollamaモデルを自動的にアンロードします"
             },
             "seed": {
                 "name": "シード",

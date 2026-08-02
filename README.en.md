@@ -2,9 +2,9 @@
 
 <h1 align="center">Prompt Assistant Reforge</h1>
 
-<p align="center"><strong>Prompt Assistant Reforge</strong> · Publisher: <strong>Helpful Old Wang</strong></p>
+<p align="center"><strong>Prompt Assistant Reforge</strong> · Publisher: <strong>热心的老王</strong> (Helpful Old Wang)</p>
 
-<img alt="Publisher" src="https://img.shields.io/badge/Publisher-Helpful%20Old%20Wang-blue?style=flat">
+<img alt="Publisher" src="https://img.shields.io/badge/Publisher-%E7%83%AD%E5%BF%83%E7%9A%84%E8%80%81%E7%8E%8B-blue?style=flat">
 <a href="https://space.bilibili.com/520680644"><img alt="bilibili" src="https://img.shields.io/badge/Detailed Video Tutorial-blue?style=flat&logo=bilibili&logoColor=2300A5DC&labelColor=%23FFFFFF&color=%2307A3D7"></a>
 <a href="https://data.xflow.cc/wechat.png"><img alt="weChat" src="https://img.shields.io/badge/Join our Community-blue?logo=wechat&logoColor=green&labelColor=%23FFFFFF&color=%2307A3D7"></a>
 <a href="https://ycn58r88iss5.feishu.cn/share/base/form/shrcnJ1AzbUJCynW9qrNJ2zPugy"><img alt="bug" src="https://img.shields.io/badge/Bug-Feedback-orange"></a>

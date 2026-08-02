@@ -23,17 +23,21 @@
                 "name": "LLM服務",
                 "tooltip": "選擇LLM服務和模型"
             },
-            "ollama_auto_unload": {
-                "name": "自動釋放顯存",
-                "tooltip": "生成完成後自動釋放Ollama模型顯存"
+            "unload_language_model": {
+                "name": "卸載語言模型",
+                "tooltip": "生成完成後卸載本地語言模型（Ollama / llama-swap），釋放顯存"
             },
-            "source_text": {
-                "name": "原文輸入",
-                "tooltip": "可選的輸入文本"
+            "unload_image_model": {
+                "name": "卸載圖像模型",
+                "tooltip": "呼叫本地大模型前，先卸載 ComfyUI 圖像模型，釋放顯存給語言/視覺模型"
             },
             "seed": {
                 "name": "隨機種子",
                 "tooltip": "控制生成的隨機性。選擇非固定模式可強制節點重新執行"
+            },
+            "source_text": {
+                "name": "原文輸入",
+                "tooltip": "可選的輸入文本"
             }
         },
         "outputs": {
@@ -71,9 +75,13 @@
                 "name": "視覺服務",
                 "tooltip": "選擇視覺服務和模型"
             },
-            "ollama_auto_unload": {
-                "name": "自動釋放顯存",
-                "tooltip": "生成完成後自動釋放Ollama模型顯存"
+            "unload_language_model": {
+                "name": "卸載語言模型",
+                "tooltip": "生成完成後卸載本地語言模型（Ollama / llama-swap），釋放顯存"
+            },
+            "unload_image_model": {
+                "name": "卸載圖像模型",
+                "tooltip": "呼叫本地大模型前，先卸載 ComfyUI 圖像模型，釋放顯存給語言/視覺模型"
             },
             "seed": {
                 "name": "隨機種子",
@@ -111,9 +119,13 @@
                 "name": "翻譯服務",
                 "tooltip": "選擇翻譯服務和模型"
             },
-            "ollama_auto_unload": {
-                "name": "自動釋放顯存",
-                "tooltip": "生成完成後自動釋放Ollama模型顯存"
+            "unload_language_model": {
+                "name": "卸載語言模型",
+                "tooltip": "生成完成後卸載本地語言模型（Ollama / llama-swap），釋放顯存"
+            },
+            "unload_image_model": {
+                "name": "卸載圖像模型",
+                "tooltip": "呼叫本地大模型前，先卸載 ComfyUI 圖像模型，釋放顯存給語言/視覺模型"
             },
             "seed": {
                 "name": "隨機種子",
@@ -151,6 +163,18 @@
                 "name": "視覺服務",
                 "tooltip": "選擇視覺服務和模型"
             },
+            "unload_language_model": {
+                "name": "卸載語言模型",
+                "tooltip": "生成完成後卸載本地語言模型（Ollama / llama-swap），釋放顯存"
+            },
+            "unload_image_model": {
+                "name": "卸載圖像模型",
+                "tooltip": "呼叫本地大模型前，先卸載 ComfyUI 圖像模型，釋放顯存給語言/視覺模型"
+            },
+            "seed": {
+                "name": "隨機種子",
+                "tooltip": "控制生成的隨機性。選擇非固定模式可強制節點重新執行"
+            },
             "sampling_mode": {
                 "name": "抽幀策略",
                 "tooltip": "選擇Auto (Uniform)將按照影片長度，均勻抽幀。Manual (Indices)模式，可透過「🎬選取反推幀」按鈕手動選擇幀",
@@ -167,17 +191,9 @@
                 "name": "手動幀索引",
                 "tooltip": "指定幀索引，支持逗號分隔或範圍 (手動模式)"
             },
-            "ollama_auto_unload": {
-                "name": "自動釋放顯存",
-                "tooltip": "生成完成後自動釋放Ollama模型顯存"
-            },
             "video": {
                 "name": "影片",
                 "tooltip": "輸入視頻"
-            },
-            "seed": {
-                "name": "隨機種子",
-                "tooltip": "控制生成的隨機性。選擇非固定模式可強制節點重新執行"
             },
             "video_frames": {
                 "name": "圖片",
@@ -214,10 +230,6 @@
             "vlm_service": {
                 "name": "視覺服務",
                 "tooltip": "選擇視覺服務和模型"
-            },
-            "ollama_auto_unload": {
-                "name": "自動釋放顯存",
-                "tooltip": "生成完成後自動釋放Ollama模型顯存"
             },
             "seed": {
                 "name": "隨機種子",

@@ -106,19 +106,9 @@ class ImageCaptionNode(VLMNodeBase, io.ComfyNode):
                     default=default_service,
                     tooltip="Select VLM Service"
                 ),
-                io.Boolean.Input(
-                    "ollama_auto_unload",
-                    default=True,
-                    label_on="Enable",
-                    label_off="Disable",
-                    tooltip="Auto unload Ollama model after generation"
-                ),
-                io.Int.Input(
-                    "seed",
-                    default=0,
-                    min=0,
-                    max=0xffffffffffffffff,
-                    control_after_generate=True,
+                cls._unload_language_model_input(),
+                cls._unload_image_model_input(),
+                cls._seed_input(
                     tooltip="Controls randomness. Set to non-fixed mode to force re-execution"
                 ),
             ],
@@ -139,7 +129,7 @@ class ImageCaptionNode(VLMNodeBase, io.ComfyNode):
     def fingerprint_inputs(
         cls,
         image=None, rule=None, custom_rule=None, custom_rule_content=None,
-        user_prompt=None, vlm_service=None, ollama_auto_unload=None, seed=None
+        user_prompt=None, vlm_service=None, unload_language_model=None, unload_image_model=None, seed=None, ollama_auto_unload=None
     ):
         """替代 V1 IS_CHANGED"""
         import hashlib
@@ -154,8 +144,9 @@ class ImageCaptionNode(VLMNodeBase, io.ComfyNode):
             temp_rule_hash,
             user_hint_hash,
             vlm_service,
-            bool(ollama_auto_unload),
-            seed
+            bool(unload_language_model) if unload_language_model is not None else bool(ollama_auto_unload),
+            bool(unload_image_model) if unload_image_model is not None else True,
+            cls._normalize_seed(seed)
         ))
 
     # -------------------------------------------------------------------------
@@ -243,9 +234,13 @@ class ImageCaptionNode(VLMNodeBase, io.ComfyNode):
     def execute(
         cls,
         image, rule, custom_rule, custom_rule_content,
-        user_prompt, vlm_service, ollama_auto_unload, seed=None
+        user_prompt, vlm_service, unload_language_model=True, unload_image_model=True, seed=0, ollama_auto_unload=None
     ):
         unique_id = cls.hidden.unique_id
+        seed = cls._normalize_seed(seed)
+        unload_language_model, unload_image_model = cls._resolve_unload_flags(
+            unload_language_model, unload_image_model, ollama_auto_unload
+        )
         request_id = None
 
         try:
@@ -322,8 +317,15 @@ class ImageCaptionNode(VLMNodeBase, io.ComfyNode):
                 'max_tokens': target_model.get('max_tokens', 1000),
                 'top_p': target_model.get('top_p', 0.9),
             }
-            if service.get('type') == 'ollama':
-                provider_config['auto_unload'] = ollama_auto_unload
+            provider_config = cls._apply_local_unload_config(
+                provider_config, service, unload_language_model
+            )
+            cls._prepare_local_model_switch(
+                unload_image_model,
+                reason=f"image_caption:{service_id}",
+                llm_model=provider_config.get('model'),
+                service_id=service_id,
+            )
 
             if not provider_config.get('model', ''):
                 raise ValueError(f"Please configure model for {vlm_service}")
@@ -345,9 +347,10 @@ class ImageCaptionNode(VLMNodeBase, io.ComfyNode):
                     single_frame = image[i:i + 1]  # 保持 4D 形状 [1, H, W, C]
                     image_data = cls._image_to_base64(single_frame)
                     frame_provider_config = provider_config
-                    if service.get('type') == 'ollama':
+                    if 'auto_unload' in provider_config:
                         frame_provider_config = provider_config.copy()
-                        frame_provider_config['auto_unload'] = bool(ollama_auto_unload) and i == batch_size - 1
+                        # Only unload language model after the final frame.
+                        frame_provider_config['auto_unload'] = bool(unload_language_model) and i == batch_size - 1
                     # 为每帧生成独立的 request_id，便于日志追踪
                     frame_request_id = generate_request_id("vlm", None, f"{unique_id}_f{i}")
                     description = cls._analyze_single_image(

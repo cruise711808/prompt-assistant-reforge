@@ -183,7 +183,7 @@ class BaseNode:
         auto_unload: bool
     ) -> Dict[str, Any]:
         """
-        覆盖 Ollama 配置中的 auto_unload 参数
+        覆盖本地模型配置中的 auto_unload 参数（兼容旧方法名）。
 
         参数：
             provider_config: 原始 Provider 配置
@@ -195,6 +195,117 @@ class BaseNode:
         config_copy = provider_config.copy()
         config_copy['auto_unload'] = auto_unload
         return config_copy
+
+    @classmethod
+    def _unload_language_model_input(cls):
+        """Boolean input: unload local LLM/VLM after generation."""
+        from comfy_api.latest import io
+        return io.Boolean.Input(
+            "unload_language_model",
+            default=True,
+            label_on="Enable",
+            label_off="Disable",
+            tooltip="After generation, unload local language model (Ollama / llama-swap) to free VRAM",
+        )
+
+    @classmethod
+    def _unload_image_model_input(cls):
+        """Boolean input: unload ComfyUI image models before local LLM/VLM."""
+        from comfy_api.latest import io
+        return io.Boolean.Input(
+            "unload_image_model",
+            default=True,
+            label_on="Enable",
+            label_off="Disable",
+            tooltip="Before local LLM/VLM calls, unload ComfyUI main image model to free VRAM",
+        )
+
+
+    @classmethod
+    def _local_unload_inputs(cls):
+        """Language + image unload toggles (seed should stay after these)."""
+        return [
+            cls._unload_language_model_input(),
+            cls._unload_image_model_input(),
+        ]
+
+    @classmethod
+    def _seed_input(cls, tooltip: str = "Controls randomness. Non-fixed mode forces re-execution"):
+        """Seed widget with paired control_after_generate (keep at end of widget list)."""
+        from comfy_api.latest import io
+        return io.Int.Input(
+            "seed",
+            default=0,
+            min=0,
+            max=0xffffffffffffffff,
+            control_after_generate=io.ControlAfterGenerate.fixed,
+            tooltip=tooltip,
+        )
+
+    @classmethod
+    def _normalize_seed(cls, seed) -> int:
+        """Coerce bad/migrated seed values (None/NaN/bool/str) back to a safe int."""
+        try:
+            if seed is None:
+                return 0
+            if isinstance(seed, bool):
+                return int(seed)
+            if isinstance(seed, float):
+                if seed != seed:  # NaN
+                    return 0
+                seed = int(seed)
+            if isinstance(seed, str):
+                seed = seed.strip()
+                if not seed or seed.lower() in {"nan", "none", "null"}:
+                    return 0
+                seed = int(float(seed))
+            seed = int(seed)
+            if seed < 0:
+                return 0
+            if seed > 9007199254740991:
+                return seed % 9007199254740991
+            return seed
+        except Exception:
+            return 0
+
+    @classmethod
+    def _resolve_unload_flags(
+        cls,
+        unload_language_model=None,
+        unload_image_model=None,
+        ollama_auto_unload=None,
+    ):
+        from ...utils.local_model_switch import resolve_node_unload_flags
+        lang, image, _clip = resolve_node_unload_flags(
+            unload_language_model=unload_language_model,
+            unload_image_model=unload_image_model,
+            ollama_auto_unload=ollama_auto_unload,
+            unload_clip_with_image=None,
+        )
+        return lang, image
+
+    @classmethod
+    def _prepare_local_model_switch(
+        cls,
+        unload_image_model: bool,
+        reason: str = "prepare_for_llm",
+        llm_model: str = None,
+        service_id: str = None,
+    ) -> None:
+        from ...utils.local_model_switch import prepare_for_local_llm
+        # CLIP/VAE co-unload is controlled by settings: PromptAssistant.Settings.UnloadClipWithImage
+        prepare_for_local_llm(
+            unload_image_model=bool(unload_image_model),
+            unload_clip_with_image=None,
+            reason=reason,
+            llm_model=llm_model,
+            service_id=service_id,
+        )
+
+    @classmethod
+    def _apply_local_unload_config(cls, provider_config, service, unload_language_model: bool):
+        from ...utils.local_model_switch import apply_local_unload_config
+        return apply_local_unload_config(provider_config, service, unload_language_model)
 
     @classmethod
     def _service_requires_api_key(cls, service: Optional[Dict[str, Any]]) -> bool:

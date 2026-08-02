@@ -31,8 +31,15 @@ THINKING_CONTROL_RULES: List[Dict[str, Any]] = [
             r"qwen[-_/.]?3(?!.*r1)",
             r"qwen.*[-_/.]?vl",
         ],
-        "params": {"enable_thinking": False},
-        "sources": ["Qwen/DashScope OpenAI-compatible API"],
+        "params": {
+            "enable_thinking": False,
+            # llama.cpp / llama-swap (jinja) reads this; top-level alone is often ignored
+            "chat_template_kwargs": {"enable_thinking": False},
+        },
+        "sources": [
+            "Qwen/DashScope OpenAI-compatible API",
+            "llama.cpp server chat_template_kwargs",
+        ],
     },
     {
         "name": "deepseek_thinking",

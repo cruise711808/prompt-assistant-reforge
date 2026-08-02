@@ -23,17 +23,21 @@
                 "name": "LLM Service",
                 "tooltip": "Select LLM Service"
             },
-            "ollama_auto_unload": {
-                "name": "Auto Unload",
-                "tooltip": "Auto unload Ollama model"
+            "unload_language_model": {
+                "name": "Unload Language Model",
+                "tooltip": "Unload local language model (Ollama / llama-swap) after generation"
             },
-            "source_text": {
-                "name": "Source Text",
-                "tooltip": "Optional input text"
+            "unload_image_model": {
+                "name": "Unload Image Model",
+                "tooltip": "Before local LLM/VLM calls, unload ComfyUI image models to free VRAM"
             },
             "seed": {
                 "name": "Seed",
                 "tooltip": "Controls randomness of generation. Select non-fixed mode to force re-execution"
+            },
+            "source_text": {
+                "name": "Source Text",
+                "tooltip": "Optional input text"
             }
         },
         "outputs": {
@@ -71,9 +75,13 @@
                 "name": "VLM Service",
                 "tooltip": "Select VLM Service"
             },
-            "ollama_auto_unload": {
-                "name": "Auto Unload",
-                "tooltip": "Auto unload Ollama model"
+            "unload_language_model": {
+                "name": "Unload Language Model",
+                "tooltip": "Unload local language model (Ollama / llama-swap) after generation"
+            },
+            "unload_image_model": {
+                "name": "Unload Image Model",
+                "tooltip": "Before local LLM/VLM calls, unload ComfyUI image models to free VRAM"
             },
             "seed": {
                 "name": "Seed",
@@ -111,9 +119,13 @@
                 "name": "Translate Service",
                 "tooltip": "Select Translation Service"
             },
-            "ollama_auto_unload": {
-                "name": "Auto Unload",
-                "tooltip": "Auto unload Ollama model"
+            "unload_language_model": {
+                "name": "Unload Language Model",
+                "tooltip": "Unload local language model (Ollama / llama-swap) after generation"
+            },
+            "unload_image_model": {
+                "name": "Unload Image Model",
+                "tooltip": "Before local LLM/VLM calls, unload ComfyUI image models to free VRAM"
             },
             "seed": {
                 "name": "Seed",
@@ -151,6 +163,18 @@
                 "name": "VLM Service",
                 "tooltip": "Select VLM Service"
             },
+            "unload_language_model": {
+                "name": "Unload Language Model",
+                "tooltip": "Unload local language model (Ollama / llama-swap) after generation"
+            },
+            "unload_image_model": {
+                "name": "Unload Image Model",
+                "tooltip": "Before local LLM/VLM calls, unload ComfyUI image models to free VRAM"
+            },
+            "seed": {
+                "name": "Seed",
+                "tooltip": "Controls randomness of generation. Select non-fixed mode to force re-execution"
+            },
             "sampling_mode": {
                 "name": "Sampling Mode",
                 "tooltip": "Select Auto (Uniform) to uniformly sample frames based on video length. Manual (Indices) mode allows manual frame selection via the '🎬Select Frames for Captioning' button",
@@ -167,10 +191,6 @@
                 "name": "Manual Indices",
                 "tooltip": "Specific frame indices (Manual mode)"
             },
-            "ollama_auto_unload": {
-                "name": "Auto Unload",
-                "tooltip": "Auto unload Ollama model"
-            },
             "video": {
                 "name": "Video",
                 "tooltip": "Input Video"
@@ -178,10 +198,6 @@
             "video_frames": {
                 "name": "Images",
                 "tooltip": "Input image sequence (IMAGE batch)"
-            },
-            "seed": {
-                "name": "Seed",
-                "tooltip": "Controls randomness of generation. Select non-fixed mode to force re-execution"
             }
         },
         "outputs": {
@@ -214,10 +230,6 @@
             "vlm_service": {
                 "name": "VLM Service",
                 "tooltip": "Select VLM Service"
-            },
-            "ollama_auto_unload": {
-                "name": "Auto Unload",
-                "tooltip": "Auto unload Ollama model"
             },
             "seed": {
                 "name": "Seed",

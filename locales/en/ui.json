@@ -238,7 +238,7 @@
   "过滤思维链输出": "Filter CoT Output",
   "针对无法关闭思维链模型，移除思考过程内容。默认开启。": "For models that cannot disable CoT, remove reasoning content. Enabled by default.",
   "自动释放模型": "Auto Unload Model",
-  "请求完成后自动卸载 Ollama / llama-swap 模型以释放显存。⚠️该选项主要对前端小助手生效，节点有独立选项。": "Auto unload Ollama / llama-swap models after requests to free VRAM. ⚠️ Applies mainly to frontend assistant; nodes have separate options.",
+  "请求完成后自动卸载 Ollama / llama-swap 模型以释放显存。⚠️该选项主要对前端小助手生效；节点可分别勾选卸载语言模型 / 卸载图像模型。": "Auto unload Ollama / llama-swap models after requests to free VRAM. ⚠️ Applies mainly to frontend assistant; nodes have separate options.",
   "2️⃣ 添加翻译、提示词优化的大语言模型 (LLM)": "2️⃣ Add LLM models for translation and prompt optimization",
   "3️⃣ 添加图像、视频反推的视觉模型 (VLM)": "3️⃣ Add VLM models for image and video caption",
   "添加模型": "Add Model",
@@ -367,5 +367,7 @@
   "帧数已截断": "⚠️ Frames Truncated",
   "帧数截断详情": "Model supports max {max} frames, {truncated} frame(s) ignored",
   "建议不要在地址后方添加 /v1。不加 /v1 会走原生 Ollama API，加了 /v1 则会走 OpenAI 兼容请求格式。": "Do not add /v1 after the address unless needed. Without /v1, native Ollama API is used; with /v1, OpenAI-compatible request format is used.",
-  "建议优先选择非思考模型或指令型（-instruct）模型，以减少思维链输出、截断和响应不稳定的问题。": "Prefer non-reasoning models or instruction-tuned (-instruct) models to reduce chain-of-thought output, truncation, and unstable responses."
+  "建议优先选择非思考模型或指令型（-instruct）模型，以减少思维链输出、截断和响应不稳定的问题。": "Prefer non-reasoning models or instruction-tuned (-instruct) models to reduce chain-of-thought output, truncation, and unstable responses.",
+  "CLIP随主模型卸载": "Unload CLIP with Main Model",
+  "开启后：调用本地大模型前卸载图像模型时，连同 CLIP/VAE 一起卸载；关闭则只卸主模型并保留 CLIP/VAE。默认关闭。": "On: when unloading image models before local LLM, also unload CLIP/VAE. Off: unload main model only and keep CLIP/VAE. Default off."
 }

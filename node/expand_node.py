@@ -116,21 +116,9 @@ class PromptExpand(LLMNodeBase, io.ComfyNode):
                     default=default_service,
                     tooltip="Select LLM service and model",
                 ),
-                # Ollama 自动释放显存
-                io.Boolean.Input(
-                    "ollama_auto_unload",
-                    default=True,
-                    label_on="Enable",
-                    label_off="Disable",
-                    tooltip="Auto unload Ollama model after generation",
-                ),
-                io.Int.Input(
-                    "seed",
-                    default=0,
-                    min=0,
-                    max=0xffffffffffffffff,
-                    control_after_generate=True,
-                ),
+                cls._unload_language_model_input(),
+                cls._unload_image_model_input(),
+                cls._seed_input(),
                 # 原文输入端口（可选），默认为连接端口
                 io.String.Input(
                     "source_text",
@@ -152,8 +140,8 @@ class PromptExpand(LLMNodeBase, io.ComfyNode):
     def fingerprint_inputs(
         cls,
         rule=None, custom_rule=None, custom_rule_content=None,
-        user_prompt=None, llm_service=None, ollama_auto_unload=None,
-        seed=None, source_text=None
+        user_prompt=None, llm_service=None, unload_language_model=None,
+        unload_image_model=None, seed=None, source_text=None, ollama_auto_unload=None
     ):
         """
         替代 V1 IS_CHANGED，只在输入内容真正变化时才触发重新执行
@@ -169,8 +157,9 @@ class PromptExpand(LLMNodeBase, io.ComfyNode):
             temp_rule_hash,
             user_hint_hash,
             llm_service,
-            bool(ollama_auto_unload),
-            seed,
+            bool(unload_language_model) if unload_language_model is not None else bool(ollama_auto_unload),
+            bool(unload_image_model) if unload_image_model is not None else True,
+            cls._normalize_seed(seed),
             text_hash,
         ))
         return input_hash
@@ -179,7 +168,8 @@ class PromptExpand(LLMNodeBase, io.ComfyNode):
     def execute(
         cls,
         rule, custom_rule, custom_rule_content, user_prompt,
-        llm_service, ollama_auto_unload, seed=None, source_text=None
+        llm_service, unload_language_model=True,
+        unload_image_model=True, seed=0, source_text=None, ollama_auto_unload=None
     ):
         """
         增强/扩写文本函数（V3 classmethod 版本）
@@ -187,6 +177,7 @@ class PromptExpand(LLMNodeBase, io.ComfyNode):
         """
         # 从 cls.hidden 获取节点唯一 ID
         unique_id = cls.hidden.unique_id
+        seed = cls._normalize_seed(seed)
         request_id = None
 
         try:
@@ -195,6 +186,10 @@ class PromptExpand(LLMNodeBase, io.ComfyNode):
             user_prompt = (user_prompt or "").strip()
             if not source_text and not user_prompt:
                 return io.NodeOutput("")
+
+            unload_language_model, unload_image_model = cls._resolve_unload_flags(
+                unload_language_model, unload_image_model, ollama_auto_unload
+            )
 
             # ---准备系统提示词（规则）---
             system_message = None
@@ -268,9 +263,15 @@ class PromptExpand(LLMNodeBase, io.ComfyNode):
                 'top_p': target_model.get('top_p', 0.9),
             }
 
-            # Ollama 特殊处理：添加 auto_unload 配置
-            if service.get('type') == 'ollama':
-                provider_config['auto_unload'] = ollama_auto_unload
+            provider_config = cls._apply_local_unload_config(
+                provider_config, service, unload_language_model
+            )
+            cls._prepare_local_model_switch(
+                unload_image_model,
+                reason=f"expand:{service_id}",
+                llm_model=provider_config.get('model'),
+                service_id=service_id,
+            )
 
             # 生成请求 ID
             request_id = generate_request_id("exp", None, unique_id)

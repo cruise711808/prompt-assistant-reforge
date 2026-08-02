@@ -3,10 +3,10 @@
 
 <h1 align="center">Prompt Assistant Reforge · 提示词小助手</h1>
 
-<p align="center"><strong>Prompt Assistant Reforge</strong> · Publisher: <strong>Helpful Old Wang</strong></p>
+<p align="center"><strong>Prompt Assistant Reforge</strong> · Publisher: <strong>热心的老王</strong></p>
 
 
-<img alt="Publisher" src="https://img.shields.io/badge/Publisher-Helpful%20Old%20Wang-blue?style=flat">
+<img alt="Publisher" src="https://img.shields.io/badge/Publisher-%E7%83%AD%E5%BF%83%E7%9A%84%E8%80%81%E7%8E%8B-blue?style=flat">
 <a href="https://space.bilibili.com/520680644"><img alt="bilibili" src="https://img.shields.io/badge/详细视频教程-blue?style=flat&logo=bilibili&logoColor=2300A5DC&labelColor=%23FFFFFF&color=%2307A3D7"></a>
 <a href="https://data.xflow.cc/wechat.png"><img alt="weChat" src="https://img.shields.io/badge/欢迎加入交流群-blue?logo=wechat&logoColor=green&labelColor=%23FFFFFF&color=%2307A3D7"></a>
 <a href="https://ycn58r88iss5.feishu.cn/share/base/form/shrcnJ1AzbUJCynW9qrNJ2zPugy"><img alt="bug" src="https://img.shields.io/badge/Bug-反馈-orange"></a>
@@ -32,7 +32,8 @@
 **Changes:**
 * **llama-swap 预置服务**：将默认的 llama.cpp 改为 llama-swap，并支持请求完成后自动卸载释放显存。
 * **本地卸载增强**：Ollama 与 llama-swap 均支持自动卸载；Ollama 仍走 `keep_alive=0`，llama-swap 走 `/api/models/unload`。
-* **Reforge 标识**：去掉设置与节点名称中的星星 emoji；项目展示为 Prompt Assistant Reforge，发布者为 Helpful Old Wang。
+* **Reforge 标识**：去掉设置与节点名称中的星星 emoji；项目展示为 Prompt Assistant Reforge，发布者为 热心的老王。
+* **本地显存切换**：节点可分别勾选「卸载语言模型 / 卸载图像模型」，便于 LLM 与出图模型轮流占用显存。
 
 </details>
 

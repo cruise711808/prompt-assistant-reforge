@@ -56,7 +56,7 @@ inject_version_to_frontend()
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
 # 打印初始化信息
-print(f"Prompt Assistant Reforge V{VERSION} 已启动 | by Helpful Old Wang")
+print(f"Prompt Assistant Reforge V{VERSION} 已启动 | by 热心的老王")
 
 # =========================================================================
 # ComfyUI V3 API 扩展注册机制

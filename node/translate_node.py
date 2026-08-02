@@ -66,21 +66,9 @@ class PromptTranslate(LLMNodeBase, io.ComfyNode):
                     default=default_service,
                     tooltip="Select translation service and model",
                 ),
-                # Ollama 自动释放显存
-                io.Boolean.Input(
-                    "ollama_auto_unload",
-                    default=True,
-                    label_on="Enable",
-                    label_off="Disable",
-                    tooltip="Auto unload Ollama model after generation",
-                ),
-                io.Int.Input(
-                    "seed",
-                    default=0,
-                    min=0,
-                    max=0xffffffffffffffff,
-                    control_after_generate=True,
-                ),
+                cls._unload_language_model_input(),
+                cls._unload_image_model_input(),
+                cls._seed_input(),
             ],
             outputs=[
                 io.String.Output("translated_text"),
@@ -92,7 +80,7 @@ class PromptTranslate(LLMNodeBase, io.ComfyNode):
     def fingerprint_inputs(
         cls,
         source_text=None, target_language=None, translate_service=None,
-        ollama_auto_unload=None, seed=None
+        unload_language_model=None, unload_image_model=None, seed=None, ollama_auto_unload=None
     ):
         """
         替代 V1 IS_CHANGED，只在输入内容真正变化时才触发重新执行
@@ -106,8 +94,9 @@ class PromptTranslate(LLMNodeBase, io.ComfyNode):
             text_hash,
             target_language,
             translate_service,
-            bool(ollama_auto_unload),
-            seed
+            bool(unload_language_model) if unload_language_model is not None else bool(ollama_auto_unload),
+            bool(unload_image_model) if unload_image_model is not None else True,
+            cls._normalize_seed(seed)
         ))
         return input_hash
 
@@ -159,7 +148,7 @@ class PromptTranslate(LLMNodeBase, io.ComfyNode):
         return request_id, result
 
     @classmethod
-    def _translate_with_llm(cls, text, from_lang, to_lang, service_id, model_name, service, service_display_name, from_lang_name, to_lang_name, auto_unload, unique_id):
+    def _translate_with_llm(cls, text, from_lang, to_lang, service_id, model_name, service, service_display_name, from_lang_name, to_lang_name, unload_language_model, unload_image_model, unique_id):
         """使用 LLM 翻译服务"""
         # ---构建 provider_config---
         llm_models = service.get('llm_models', [])
@@ -186,10 +175,15 @@ class PromptTranslate(LLMNodeBase, io.ComfyNode):
             'max_tokens': target_model.get('max_tokens', 1000),
             'top_p': target_model.get('top_p', 0.9),
         }
-
-        # Ollama 特殊处理：添加 auto_unload 配置
-        if service.get('type') == 'ollama':
-            provider_config['auto_unload'] = auto_unload
+        provider_config = cls._apply_local_unload_config(
+            provider_config, service, unload_language_model
+        )
+        cls._prepare_local_model_switch(
+            unload_image_model,
+            reason=f"translate:{service_id}",
+            llm_model=provider_config.get('model'),
+            service_id=service_id,
+        )
 
         # 创建请求 ID
         request_id = generate_request_id("trans", "llm", unique_id)
@@ -232,13 +226,17 @@ class PromptTranslate(LLMNodeBase, io.ComfyNode):
         return request_id, result
 
     @classmethod
-    def execute(cls, source_text, target_language, translate_service, ollama_auto_unload, seed=None):
+    def execute(cls, source_text, target_language, translate_service, unload_language_model=True, unload_image_model=True, seed=0, ollama_auto_unload=None):
         """
         翻译文本函数（V3 classmethod 版本）
         通过 cls.hidden.unique_id 访问节点唯一 ID
         """
         # 从 cls.hidden 获取节点唯一 ID
         unique_id = cls.hidden.unique_id
+        seed = cls._normalize_seed(seed)
+        unload_language_model, unload_image_model = cls._resolve_unload_flags(
+            unload_language_model, unload_image_model, ollama_auto_unload
+        )
         request_id = None
 
         try:
@@ -291,7 +289,7 @@ class PromptTranslate(LLMNodeBase, io.ComfyNode):
                     source_text, detected_lang, to_lang,
                     service_id, model_name, service,
                     translate_service, from_lang_name, to_lang_name,
-                    ollama_auto_unload, unique_id
+                    unload_language_model, unload_image_model, unique_id
                 )
 
             if result and result.get('success'):

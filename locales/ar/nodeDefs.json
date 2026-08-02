@@ -23,17 +23,21 @@
                 "name": "خدمة LLM",
                 "tooltip": "حدد خدمة LLM"
             },
-            "ollama_auto_unload": {
-                "name": "التفريغ التلقائي",
-                "tooltip": "التفريغ التلقائي لنموذج أولاما"
+            "unload_language_model": {
+                "name": "تفريغ نموذج اللغة",
+                "tooltip": "تفريغ نموذج اللغة المحلي (Ollama / llama-swap) بعد التوليد"
             },
-            "source_text": {
-                "name": "النص المصدر",
-                "tooltip": "نص الإدخال الاختياري"
+            "unload_image_model": {
+                "name": "تفريغ نموذج الصور",
+                "tooltip": "قبل استدعاء LLM/VLM المحلي، فرّغ نماذج صور ComfyUI"
             },
             "seed": {
                 "name": "بذرة",
                 "tooltip": "التحكم في عشوائية التوليد. اختر وضعاً غير ثابت لفرض إعادة التنفيذ"
+            },
+            "source_text": {
+                "name": "النص المصدر",
+                "tooltip": "نص الإدخال الاختياري"
             }
         },
         "outputs": {
@@ -71,9 +75,13 @@
                 "name": "خدمة VLM",
                 "tooltip": "حدد خدمة VLM"
             },
-            "ollama_auto_unload": {
-                "name": "التفريغ التلقائي",
-                "tooltip": "التفريغ التلقائي لنموذج أولاما"
+            "unload_language_model": {
+                "name": "تفريغ نموذج اللغة",
+                "tooltip": "تفريغ نموذج اللغة المحلي (Ollama / llama-swap) بعد التوليد"
+            },
+            "unload_image_model": {
+                "name": "تفريغ نموذج الصور",
+                "tooltip": "قبل استدعاء LLM/VLM المحلي، فرّغ نماذج صور ComfyUI"
             },
             "seed": {
                 "name": "بذرة",
@@ -111,9 +119,13 @@
                 "name": "خدمة الترجمة",
                 "tooltip": "اختر خدمة الترجمة"
             },
-            "ollama_auto_unload": {
-                "name": "التفريغ التلقائي",
-                "tooltip": "التفريغ التلقائي لنموذج أولاما"
+            "unload_language_model": {
+                "name": "تفريغ نموذج اللغة",
+                "tooltip": "تفريغ نموذج اللغة المحلي (Ollama / llama-swap) بعد التوليد"
+            },
+            "unload_image_model": {
+                "name": "تفريغ نموذج الصور",
+                "tooltip": "قبل استدعاء LLM/VLM المحلي، فرّغ نماذج صور ComfyUI"
             },
             "seed": {
                 "name": "بذرة",
@@ -151,6 +163,18 @@
                 "name": "خدمة VLM",
                 "tooltip": "حدد خدمة VLM"
             },
+            "unload_language_model": {
+                "name": "تفريغ نموذج اللغة",
+                "tooltip": "تفريغ نموذج اللغة المحلي (Ollama / llama-swap) بعد التوليد"
+            },
+            "unload_image_model": {
+                "name": "تفريغ نموذج الصور",
+                "tooltip": "قبل استدعاء LLM/VLM المحلي، فرّغ نماذج صور ComfyUI"
+            },
+            "seed": {
+                "name": "بذرة",
+                "tooltip": "التحكم في عشوائية التوليد. اختر وضعاً غير ثابت لفرض إعادة التنفيذ"
+            },
             "sampling_mode": {
                 "name": "وضع أخذ العينات",
                 "tooltip": "حدد تلقائي (موحد) لأخذ عينات من الإطارات بشكل موحد بناءً على طول الفيديو.يسمح الوضع اليدوي (المؤشرات) بتحديد الإطار يدويًا عبر الزر \"🎬Select Frames for Captioning\"",
@@ -167,17 +191,9 @@
                 "name": "المؤشرات اليدوية",
                 "tooltip": "مؤشرات إطار محددة (الوضع اليدوي)"
             },
-            "ollama_auto_unload": {
-                "name": "التفريغ التلقائي",
-                "tooltip": "التفريغ التلقائي لنموذج أولاما"
-            },
             "video": {
                 "name": "فيديو",
                 "tooltip": "إدخال الفيديو"
-            },
-            "seed": {
-                "name": "بذرة",
-                "tooltip": "التحكم في عشوائية التوليد. اختر وضعاً غير ثابت لفرض إعادة التنفيذ"
             },
             "video_frames": {
                 "name": "الصور",
@@ -214,10 +230,6 @@
             "vlm_service": {
                 "name": "خدمة VLM",
                 "tooltip": "حدد خدمة VLM"
-            },
-            "ollama_auto_unload": {
-                "name": "التفريغ التلقائي",
-                "tooltip": "التفريغ التلقائي لنموذج أولاما"
             },
             "seed": {
                 "name": "بذرة",

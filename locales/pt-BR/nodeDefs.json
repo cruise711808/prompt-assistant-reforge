@@ -23,17 +23,21 @@
                 "name": "Serviço LLM",
                 "tooltip": "Selecione o Serviço LLM"
             },
-            "ollama_auto_unload": {
-                "name": "Descarregamento Automático",
-                "tooltip": "Descarregar o modelo Ollama automaticamente"
+            "unload_language_model": {
+                "name": "Descarregar modelo de linguagem",
+                "tooltip": "Descarregar o modelo de linguagem local (Ollama / llama-swap) após gerar"
             },
-            "source_text": {
-                "name": "Texto de Origem",
-                "tooltip": "Entrada de texto opcional"
+            "unload_image_model": {
+                "name": "Descarregar modelo de imagem",
+                "tooltip": "Antes do LLM/VLM local, descarregar modelos de imagem do ComfyUI"
             },
             "seed": {
                 "name": "Semente",
                 "tooltip": "Controla a aleatoriedade da geração. Selecione um modo não fixo para forçar a reexecução"
+            },
+            "source_text": {
+                "name": "Texto de Origem",
+                "tooltip": "Entrada de texto opcional"
             }
         },
         "outputs": {
@@ -71,9 +75,13 @@
                 "name": "Serviço VLM",
                 "tooltip": "Selecione o Serviço VLM"
             },
-            "ollama_auto_unload": {
-                "name": "Descarregamento Automático",
-                "tooltip": "Descarregar o modelo Ollama automaticamente"
+            "unload_language_model": {
+                "name": "Descarregar modelo de linguagem",
+                "tooltip": "Descarregar o modelo de linguagem local (Ollama / llama-swap) após gerar"
+            },
+            "unload_image_model": {
+                "name": "Descarregar modelo de imagem",
+                "tooltip": "Antes do LLM/VLM local, descarregar modelos de imagem do ComfyUI"
             },
             "seed": {
                 "name": "Semente",
@@ -111,9 +119,13 @@
                 "name": "Serviço de Tradução",
                 "tooltip": "Selecione o Serviço de Tradução"
             },
-            "ollama_auto_unload": {
-                "name": "Descarregamento Automático",
-                "tooltip": "Descarregar o modelo Ollama automaticamente"
+            "unload_language_model": {
+                "name": "Descarregar modelo de linguagem",
+                "tooltip": "Descarregar o modelo de linguagem local (Ollama / llama-swap) após gerar"
+            },
+            "unload_image_model": {
+                "name": "Descarregar modelo de imagem",
+                "tooltip": "Antes do LLM/VLM local, descarregar modelos de imagem do ComfyUI"
             },
             "seed": {
                 "name": "Semente",
@@ -151,6 +163,18 @@
                 "name": "Serviço VLM",
                 "tooltip": "Selecione o Serviço VLM"
             },
+            "unload_language_model": {
+                "name": "Descarregar modelo de linguagem",
+                "tooltip": "Descarregar o modelo de linguagem local (Ollama / llama-swap) após gerar"
+            },
+            "unload_image_model": {
+                "name": "Descarregar modelo de imagem",
+                "tooltip": "Antes do LLM/VLM local, descarregar modelos de imagem do ComfyUI"
+            },
+            "seed": {
+                "name": "Semente",
+                "tooltip": "Controla a aleatoriedade da geração. Selecione um modo não fixo para forçar a reexecução"
+            },
             "sampling_mode": {
                 "name": "Modo de Amostragem",
                 "tooltip": "Escolha Automático para amostrar frames pelo comprimento do vídeo. Manual permite seleção exata.",
@@ -167,17 +191,9 @@
                 "name": "Índices Manuais",
                 "tooltip": "Índices de frames específicos (Modo Manual)"
             },
-            "ollama_auto_unload": {
-                "name": "Descarregamento Automático",
-                "tooltip": "Descarregar o modelo Ollama automaticamente"
-            },
             "video": {
                 "name": "Vídeo",
                 "tooltip": "Vídeo de entrada"
-            },
-            "seed": {
-                "name": "Semente",
-                "tooltip": "Controla a aleatoriedade da geração. Selecione um modo não fixo para forçar a reexecução"
             },
             "video_frames": {
                 "name": "Imagens",
@@ -214,10 +230,6 @@
             "vlm_service": {
                 "name": "Serviço VLM",
                 "tooltip": "Selecione o Serviço VLM"
-            },
-            "ollama_auto_unload": {
-                "name": "Descarregamento Automático",
-                "tooltip": "Descarregar o modelo Ollama automaticamente"
             },
             "seed": {
                 "name": "Semente",
