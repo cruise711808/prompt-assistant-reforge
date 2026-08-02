@@ -1,6 +1,6 @@
-{
+﻿{
     "PromptExpand": {
-        "display_name": "✨Mejora inmediata",
+        "display_name": "Mejora inmediata",
         "description": "Mejore su mensaje usando LLM",
         "inputs": {
             "rule": {
@@ -44,7 +44,7 @@
         }
     },
     "ImageCaptionNode": {
-        "display_name": "✨ Pie de foto",
+        "display_name": " Pie de foto",
         "description": "Generar título para imagen usando VLM",
         "inputs": {
             "image": {
@@ -92,7 +92,7 @@
         }
     },
     "PromptTranslate": {
-        "display_name": "✨Traducción rápida",
+        "display_name": "Traducción rápida",
         "description": "Traducir mensaje entre idiomas",
         "inputs": {
             "source_text": {
@@ -128,7 +128,7 @@
         }
     },
     "VideoCaptionNode": {
-        "display_name": "✨Subtítulo de video",
+        "display_name": "Subtítulo de video",
         "description": "Generar subtítulos para video usando VLM",
         "inputs": {
             "rule": {
@@ -196,7 +196,7 @@
         }
     },
     "KontextPresetNode": {
-        "display_name": "✨Contexto preestablecido",
+        "display_name": "Contexto preestablecido",
         "description": "Genere instrucción creativa utilizando los ajustes preestablecidos de Kontext",
         "inputs": {
             "image": {

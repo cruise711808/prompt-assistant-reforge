@@ -1,6 +1,6 @@
-{
+﻿{
     "PromptExpand": {
-        "display_name": "✨Prompt Enhance",
+        "display_name": "Prompt Enhance",
         "description": "Enhance your prompt using LLM",
         "inputs": {
             "rule": {
@@ -44,7 +44,7 @@
         }
     },
     "ImageCaptionNode": {
-        "display_name": "✨Image Caption",
+        "display_name": "Image Caption",
         "description": "Generate caption for image using VLM",
         "inputs": {
             "image": {
@@ -92,7 +92,7 @@
         }
     },
     "PromptTranslate": {
-        "display_name": "✨Prompt Translate",
+        "display_name": "Prompt Translate",
         "description": "Translate prompt between languages",
         "inputs": {
             "source_text": {
@@ -128,7 +128,7 @@
         }
     },
     "VideoCaptionNode": {
-        "display_name": "✨Video Caption",
+        "display_name": "Video Caption",
         "description": "Generate caption for video using VLM",
         "inputs": {
             "rule": {
@@ -196,7 +196,7 @@
         }
     },
     "KontextPresetNode": {
-        "display_name": "✨Kontext Preset",
+        "display_name": "Kontext Preset",
         "description": "Generate creative instruction using Kontext presets",
         "inputs": {
             "image": {

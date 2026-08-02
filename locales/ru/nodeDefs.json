@@ -1,6 +1,6 @@
-{
+﻿{
     "PromptExpand": {
-        "display_name": "✨Расширение промпта",
+        "display_name": "Расширение промпта",
         "description": "Улучшение и расширение промпта с помощью LLM",
         "inputs": {
             "rule": {
@@ -44,7 +44,7 @@
         }
     },
     "ImageCaptionNode": {
-        "display_name": "✨Описание изображения",
+        "display_name": "Описание изображения",
         "description": "Генерация описания изображения с помощью VLM",
         "inputs": {
             "image": {
@@ -92,7 +92,7 @@
         }
     },
     "PromptTranslate": {
-        "display_name": "✨Перевод промпта",
+        "display_name": "Перевод промпта",
         "description": "Перевод промпта между языками",
         "inputs": {
             "source_text": {
@@ -128,7 +128,7 @@
         }
     },
     "VideoCaptionNode": {
-        "display_name": "✨Описание видео",
+        "display_name": "Описание видео",
         "description": "Генерация описания видео с помощью VLM",
         "inputs": {
             "rule": {
@@ -196,7 +196,7 @@
         }
     },
     "KontextPresetNode": {
-        "display_name": "✨Пресет Kontext",
+        "display_name": "Пресет Kontext",
         "description": "Генерация креативной инструкции с использованием пресетов Kontext",
         "inputs": {
             "image": {

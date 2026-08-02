@@ -1,4 +1,4 @@
-"""
+﻿"""
 数据迁移工具
 
 用于处理旧版本配置文件到新版本的迁移
@@ -542,6 +542,36 @@ class MigrationTool:
         
         import copy
         
+        # 0. 将旧预置 llama.cpp (service_355) 迁移为 llama-swap
+        for user_service in user_config['model_services']:
+            if user_service.get('id') != 'service_355':
+                continue
+            if 'llama_swap' in user_service_ids:
+                # 已存在新预置时，仅更新旧条目名称提示，避免重复
+                if str(user_service.get('name') or '').lower() in ('llama.cpp', 'llamacpp', 'service_355'):
+                    user_service['name'] = 'llama.cpp (legacy)'
+                continue
+            user_service['id'] = 'llama_swap'
+            if not user_service.get('name') or str(user_service.get('name')).lower() in ('llama.cpp', 'llamacpp', 'service_355'):
+                user_service['name'] = 'llama-swap'
+            if not user_service.get('description') or 'llama.cpp' in str(user_service.get('description') or '').lower():
+                user_service['description'] = '本地 llama-swap 模型代理（支持自动卸载显存）'
+            user_service.setdefault('type', 'openai_compatible')
+            user_service['unload_backend'] = 'llama_swap'
+            if 'auto_unload' not in user_service:
+                user_service['auto_unload'] = True
+user_service_ids.add('llama_swap')
+            user_service_ids.discard('service_355')
+            # 同步 current_services 中的旧 service_355 引用
+            current_services = user_config.get('current_services') or {}
+            if isinstance(current_services, dict):
+                for role, info in current_services.items():
+                    if isinstance(info, dict) and info.get('service') == 'service_355':
+                        info['service'] = 'llama_swap'
+                    elif info == 'service_355':
+                        current_services[role] = 'llama_swap'
+            self._log("[config.json] 已将预置服务 service_355 (llama.cpp) 迁移为 llama_swap")
+
         # 1. 补全用户已有服务的缺失字段
         template_services_map = {
             s.get('id'): s for s in default_config['model_services'] if s.get('id')

@@ -1,6 +1,6 @@
-{
+﻿{
     "PromptExpand": {
-        "display_name": "✨بهبود سریع",
+        "display_name": "بهبود سریع",
         "description": "درخواست خود را با استفاده از LLM تقویت کنید",
         "inputs": {
             "rule": {
@@ -44,7 +44,7 @@
         }
     },
     "ImageCaptionNode": {
-        "display_name": "✨کپشن تصویر",
+        "display_name": "کپشن تصویر",
         "description": "ایجاد عنوان برای تصویر با استفاده از VLM",
         "inputs": {
             "image": {
@@ -92,7 +92,7 @@
         }
     },
     "PromptTranslate": {
-        "display_name": "✨ترجمه سریع",
+        "display_name": "ترجمه سریع",
         "description": "اعلان بین زبان ها را ترجمه کنید",
         "inputs": {
             "source_text": {
@@ -128,7 +128,7 @@
         }
     },
     "VideoCaptionNode": {
-        "display_name": "✨کپشن ویدیو",
+        "display_name": "کپشن ویدیو",
         "description": "با استفاده از VLM برای ویدیو زیرنویس ایجاد کنید",
         "inputs": {
             "rule": {
@@ -196,7 +196,7 @@
         }
     },
     "KontextPresetNode": {
-        "display_name": "✨پیش‌تنظیم متن",
+        "display_name": "پیش‌تنظیم متن",
         "description": "با استفاده از پیش تنظیم های Context، دستورالعمل های خلاقانه ایجاد کنید",
         "inputs": {
             "image": {

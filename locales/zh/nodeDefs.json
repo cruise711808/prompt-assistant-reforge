@@ -1,6 +1,6 @@
-{
+﻿{
     "PromptExpand": {
-        "display_name": "✨提示词优化",
+        "display_name": "提示词优化",
         "description": "使用LLM增强或扩写您的提示词",
         "inputs": {
             "rule": {
@@ -44,7 +44,7 @@
         }
     },
     "ImageCaptionNode": {
-        "display_name": "✨图像反推提示词",
+        "display_name": "图像反推提示词",
         "description": "使用VLM生成图像描述",
         "inputs": {
             "image": {
@@ -92,7 +92,7 @@
         }
     },
     "PromptTranslate": {
-        "display_name": "✨提示词翻译",
+        "display_name": "提示词翻译",
         "description": "多语言提示词翻译",
         "inputs": {
             "source_text": {
@@ -128,7 +128,7 @@
         }
     },
     "VideoCaptionNode": {
-        "display_name": "✨视频反推提示词",
+        "display_name": "视频反推提示词",
         "description": "使用VLM生成视频描述",
         "inputs": {
             "rule": {
@@ -196,7 +196,7 @@
         }
     },
     "KontextPresetNode": {
-        "display_name": "✨Kontext预设",
+        "display_name": "Kontext预设",
         "description": "使用Kontext预设生成创意指令",
         "inputs": {
             "image": {

@@ -1,6 +1,6 @@
-{
+﻿{
     "PromptExpand": {
-        "display_name": "✨Genişlet",
+        "display_name": "Genişlet",
         "description": "LLM kullanarak istemi geliştirin ve genişletin",
         "inputs": {
             "rule": {
@@ -44,7 +44,7 @@
         }
     },
     "ImageCaptionNode": {
-        "display_name": "✨Görüntü Başlığı",
+        "display_name": "Görüntü Başlığı",
         "description": "VLM kullanarak görüntü için başlık oluşturun",
         "inputs": {
             "image": {
@@ -92,7 +92,7 @@
         }
     },
     "PromptTranslate": {
-        "display_name": "✨Çeviri",
+        "display_name": "Çeviri",
         "description": "İstemi diller arasında çevirin",
         "inputs": {
             "source_text": {
@@ -128,7 +128,7 @@
         }
     },
     "VideoCaptionNode": {
-        "display_name": "✨Video Başlığı",
+        "display_name": "Video Başlığı",
         "description": "VLM kullanarak video için başlık oluşturun",
         "inputs": {
             "rule": {
@@ -196,7 +196,7 @@
         }
     },
     "KontextPresetNode": {
-        "display_name": "✨Kontext Önayarı",
+        "display_name": "Kontext Önayarı",
         "description": "Kontext önayarlarını kullanarak yaratıcı talimatlar oluşturun",
         "inputs": {
             "image": {

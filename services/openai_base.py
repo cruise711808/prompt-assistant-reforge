@@ -1,4 +1,4 @@
-"""
+﻿"""
 OpenAI兼容服务基类
 为LLM和VLM服务提供统一的OpenAI兼容API处理逻辑
 """
@@ -9,7 +9,7 @@ import asyncio
 import httpx
 from typing import Optional, Dict, Any, List, Callable
 from .core import BaseAPIService, HTTPClientPool
-from .ollama_utils import wait_before_ollama_unload
+from ..utils.model_unload import unload_local_model, service_supports_auto_unload
 from ..utils.common import (
     format_api_error, ProgressBar, log_complete, log_error,
     PREFIX, PROCESS_PREFIX, WARN_PREFIX, ERROR_PREFIX, format_elapsed_time,
@@ -146,7 +146,9 @@ class OpenAICompatibleService(BaseAPIService):
         cancel_event: Optional[Any] = None,
         task_type: str = None,
         source: str = None,
-        filter_thinking_output: bool = True
+        filter_thinking_output: bool = True,
+        provider_id: Optional[str] = None,
+        auto_unload: Optional[bool] = None,
     ) -> Dict[str, Any]:
         """
         使用HTTP直连调用/chat/completions接口
@@ -449,16 +451,26 @@ class OpenAICompatibleService(BaseAPIService):
 
                 # 检查结果
                 if result["success"]:
-                    # Ollama 服务成功后尝试卸载模型
-                    if provider_display_name.lower().find("ollama") != -1:
-                        try:
-                            from ..config_manager import config_manager
-                            service_config = config_manager.get_service(provider_display_name) or {}
-                            # 注入当前实际使用的 base_url，防止回退到 localhost 导致清理显存失败
-                            service_config['base_url'] = base_url
+                    # Ollama / llama-swap 等本地服务成功后尝试卸载模型
+                    try:
+                        from ..config_manager import config_manager
+                        provider_key = provider_id or provider_display_name
+                        service_config = config_manager.get_service(provider_key)
+                        if not service_config:
+                            for svc in (config_manager.load_config().get("model_services") or []):
+                                if svc.get("id") == provider_key or svc.get("name") == provider_display_name:
+                                    service_config = svc
+                                    break
+                        service_config = dict(service_config or {})
+                        service_config["base_url"] = base_url
+                        if "provider" not in service_config and provider_key:
+                            service_config["provider"] = provider_key
+                        if auto_unload is not None:
+                            service_config["auto_unload"] = auto_unload
+                        if service_supports_auto_unload(service_config):
                             await cls._unload_ollama_model(model, service_config)
-                        except:
-                            pass
+                    except Exception:
+                        pass
                     return result
                 
                 if result.get("interrupted"):
@@ -489,44 +501,10 @@ class OpenAICompatibleService(BaseAPIService):
     @staticmethod
     async def _unload_ollama_model(model: str, provider_config: Dict[str, Any]):
         """
-        卸载Ollama模型以释放显存和内存
-        
-        参数:
-            model: 模型名称
-            provider_config: 提供商配置字典
+        卸载本地模型以释放显存和内存。
+        支持 Ollama 与 llama-swap。
         """
-        try:
-            # 检查是否启用自动释放
-            auto_unload = provider_config.get('auto_unload', True)
-            if not auto_unload:
-                from ..utils.common import PROCESS_PREFIX
-                print(f"{PROCESS_PREFIX} Ollama模型已保留 | 模型:{model}")
-                return
-            
-            await wait_before_ollama_unload()
-            
-            # 获取base_url
-            base_url = provider_config.get('base_url', 'http://localhost:11434')
-            if base_url.endswith('/v1'):
-                base_url = base_url[:-3]
-            
-            # 调用Ollama API卸载模型
-            url = f"{base_url}/api/generate"
-            payload = {
-                "model": model,
-                "keep_alive": 0
-            }
-            
-            # 创建临时客户端（卸载操作不需要复用，禁用代理避免localhost请求被拦截）
-            async with httpx.AsyncClient(timeout=5.0, trust_env=False) as client:
-                response = await client.post(url, json=payload)
-                if response.status_code == 200:
-                    from ..utils.common import PROCESS_PREFIX
-                    print(f"{PROCESS_PREFIX} Ollama模型已释放 | 模型:{model}")
-                
-        except Exception as e:
-            from ..utils.common import WARN_PREFIX
-            print(f"{WARN_PREFIX} Ollama模型释放失败（不影响结果） | 模型:{model} | 错误:{str(e)[:50]}")
+        await unload_local_model(model, provider_config or {})
     
     @classmethod
     def get_provider_display_name(cls, provider: str) -> str:

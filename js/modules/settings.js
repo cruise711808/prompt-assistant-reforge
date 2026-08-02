@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 小助手设置服务
  * 负责管理小助手的设置选项，提供开关控制功能
  */
@@ -230,36 +230,13 @@ let versionCheckCache = {
  * @returns {Promise<string|null>} 返回最新版本号，格式如 "1.2.3"，失败返回 null
  */
 async function fetchLatestVersion() {
-    // 如果已经检查过，直接返回缓存结果
+    // Prompt Assistant Reforge: no remote version endpoint configured.
     if (versionCheckCache.checked) {
         return versionCheckCache.latestVersion;
     }
-
-    try {
-        const response = await fetch('https://cdn.jsdelivr.net/gh/yawiii/ComfyUI-Prompt-Assistant@main/pyproject.toml', {
-            cache: 'no-cache'
-        });
-
-        if (!response.ok) {
-            logger.warn(`[版本检查] 请求失败: ${response.status}`);
-            versionCheckCache.checked = true;
-            return null;
-        }
-
-        const tomlContent = await response.text();
-        const versionMatch = tomlContent.match(/^version\s*=\s*["']([^"']+)["']/m);
-        const version = versionMatch ? versionMatch[1] : null;
-
-        // 缓存检查结果
-        versionCheckCache.checked = true;
-        versionCheckCache.latestVersion = version;
-
-        return version;
-    } catch (error) {
-        logger.warn(`[版本检查] 获取失败: ${error.message}`);
-        versionCheckCache.checked = true;
-        return null;
-    }
+    versionCheckCache.checked = true;
+    versionCheckCache.latestVersion = null;
+    return null;
 }
 
 /**
@@ -477,7 +454,7 @@ export async function registerSettings() {
                 {
                     id: UI_LANGUAGE_SETTING_ID,
                     name: "界面语言",
-                    category: ["✨提示词小助手", "系统", "界面语言"],
+                    category: ["提示词小助手", "系统", "界面语言"],
                     type: "combo",
                     options: LANGUAGE_OPTIONS,
                     defaultValue: "zh",
@@ -494,7 +471,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.Enabled",
                     name: "启用小助手",
-                    category: ["✨提示词小助手", "小助手功能开关", "总开关"],
+                    category: ["提示词小助手", "小助手功能开关", "总开关"],
                     type: "boolean",
                     defaultValue: true,
                     tooltip: "关闭后，提示词小助手所有功能将禁用",
@@ -576,7 +553,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Settings.CreationMode",
                     name: "小助手创建方式（提示词）",
-                    category: ["✨提示词小助手", "系统", "提示词小助手创建方式"],
+                    category: ["提示词小助手", "系统", "提示词小助手创建方式"],
                     type: "combo",
                     options: [
                         { text: "自动创建", value: "auto" },
@@ -602,7 +579,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Settings.ImageCaptionCreationMode",
                     name: "小助手创建方式（图像反推）",
-                    category: ["✨提示词小助手", "系统", "图像小助手创建方式"],
+                    category: ["提示词小助手", "系统", "图像小助手创建方式"],
                     type: "combo",
                     options: [
                         { text: "自动创建", value: "auto" },
@@ -628,7 +605,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Location",
                     name: "小助手布局（提示词）",
-                    category: ["✨提示词小助手", "界面", "提示词小助手布局"],
+                    category: ["提示词小助手", "界面", "提示词小助手布局"],
                     type: "combo",
                     options: [
                         // { text: "左上（横向）", value: "top-left-h" },
@@ -660,7 +637,7 @@ export async function registerSettings() {
                 {
                     id: "ImageCaption.Location",
                     name: "小助手布局（图像反推）",
-                    category: ["✨提示词小助手", "界面", "图像小助手布局"],
+                    category: ["提示词小助手", "界面", "图像小助手布局"],
                     type: "combo",
                     options: [
                         { text: "横", value: "bottom-left-h" },
@@ -683,7 +660,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.APIConfig",
                     name: "百度和大语言模型API配置",
-                    category: ["✨提示词小助手", " 配置", "API配置"],
+                    category: ["提示词小助手", " 配置", "API配置"],
                     tooltip: "配置或修改API信息",
                     type: () => {
                         const row = document.createElement("tr");
@@ -709,7 +686,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Service.Translate",
                     name: "选择翻译服务",
-                    category: ["✨提示词小助手", " 配置", "翻译"],
+                    category: ["提示词小助手", " 配置", "翻译"],
                     tooltip: "选择一个服务商用于翻译，也可以通过右键翻译按钮来切换",
                     type: () => {
                         return createServiceSelector('translate', '翻译');
@@ -720,7 +697,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Service.LLM",
                     name: "选择提示词优化服务",
-                    category: ["✨提示词小助手", " 配置", "提示词优化"],
+                    category: ["提示词小助手", " 配置", "提示词优化"],
                     tooltip: "选择一个服务商用于提示词优化，也可以通过右键提示词优化按钮来切换",
                     type: () => {
                         return createServiceSelector('llm', '提示词优化');
@@ -731,7 +708,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Service.VLM",
                     name: "选择图像反推服务",
-                    category: ["✨提示词小助手", " 配置", "图像反推"],
+                    category: ["提示词小助手", " 配置", "图像反推"],
                     tooltip: "选择一个服务商用于图像反推，也可以通过右键反推按钮来切换",
                     type: () => {
                         return createServiceSelector('vlm', '图像反推');
@@ -742,7 +719,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.History",
                     name: "启用历史功能",
-                    category: ["✨提示词小助手", "小助手功能开关", "历史功能"],
+                    category: ["提示词小助手", "小助手功能开关", "历史功能"],
                     type: "boolean",
                     defaultValue: true,
                     tooltip: "开启或关闭历史、撤销、重做功能",
@@ -758,7 +735,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.Tag",
                     name: "启用标签工具",
-                    category: ["✨提示词小助手", "小助手功能开关", "标签功能"],
+                    category: ["提示词小助手", "小助手功能开关", "标签功能"],
                     type: "boolean",
                     defaultValue: true,
                     tooltip: "开启或关闭标签工具功能",
@@ -774,7 +751,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.Expand",
                     name: "启用提示词优化功能",
-                    category: ["✨提示词小助手", "小助手功能开关", "提示词优化功能"],
+                    category: ["提示词小助手", "小助手功能开关", "提示词优化功能"],
                     type: "boolean",
                     defaultValue: true,
                     tooltip: "开启或关闭提示词优化功能",
@@ -790,7 +767,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.Translate",
                     name: "启用翻译功能",
-                    category: ["✨提示词小助手", "小助手功能开关", "翻译功能"],
+                    category: ["提示词小助手", "小助手功能开关", "翻译功能"],
                     type: "boolean",
                     defaultValue: true,
                     tooltip: "开启或关闭翻译功能",
@@ -806,7 +783,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.UseTranslateCache",
                     name: "使用翻译缓存",
-                    category: ["✨提示词小助手", " 翻译功能设置", "翻译缓存"],
+                    category: ["提示词小助手", " 翻译功能设置", "翻译缓存"],
                     type: "boolean",
                     defaultValue: true,
                     tooltip: "开启后，如果翻译内容翻译过，则使用历史翻译结果，避免相同内容重复翻译改变原意。如果需要重新翻译，请随便加一个空格即可跳过缓存。",
@@ -821,7 +798,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.CacheMixedLangTranslation",
                     name: "混合语言翻译进行缓存",
-                    category: ["✨提示词小助手", " 翻译功能设置", "混合语言缓存"],
+                    category: ["提示词小助手", " 翻译功能设置", "混合语言缓存"],
                     type: "boolean",
                     defaultValue: false,
                     tooltip: "关闭时，中英文混合内容的翻译结果不会写入缓存，避免污染缓存。开启后会正常缓存。",
@@ -835,7 +812,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.MixedLangTranslateRule",
                     name: "混合语言翻译规则",
-                    category: ["✨提示词小助手", " 翻译功能设置", "混合语言规则"],
+                    category: ["提示词小助手", " 翻译功能设置", "混合语言规则"],
                     type: "combo",
                     options: [
                         { text: "翻译成英文", value: "to_en" },
@@ -855,7 +832,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.TranslateFormatPunctuation",
                     name: "始终使用半角标点符号",
-                    category: ["✨提示词小助手", " 翻译功能设置", "标点处理"],
+                    category: ["提示词小助手", " 翻译功能设置", "标点处理"],
                     type: "boolean",
                     defaultValue: false,
                     tooltip: "打开后，翻译结果会自动将中文标点符号替换成英文标点符号",
@@ -867,7 +844,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.TranslateFormatSpace",
                     name: "自动移除多余空格",
-                    category: ["✨提示词小助手", " 翻译功能设置", "空格处理"],
+                    category: ["提示词小助手", " 翻译功能设置", "空格处理"],
                     type: "boolean",
                     defaultValue: false,
                     tooltip: "打开后，翻译结果会自动移除多余空格",
@@ -879,7 +856,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.TranslateFormatDots",
                     name: "移除多余连续点号",
-                    category: ["✨提示词小助手", " 翻译功能设置", "点号处理"],
+                    category: ["提示词小助手", " 翻译功能设置", "点号处理"],
                     type: "boolean",
                     defaultValue: false,
                     tooltip: "打开后，翻译结果会将多余的“......”统一为“...”",
@@ -891,7 +868,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.TranslateFormatNewline",
                     name: "保留换行符",
-                    category: ["✨提示词小助手", " 翻译功能设置", "换行处理"],
+                    category: ["提示词小助手", " 翻译功能设置", "换行处理"],
                     type: "boolean",
                     defaultValue: true,
                     tooltip: "打开后，翻译结果会尽量保持原文的换行，避免翻译后丢失段落",
@@ -907,7 +884,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.ImageCaption",
                     name: "启用图像反推功能",
-                    category: ["✨提示词小助手", "小助手功能开关", "图像反推"],
+                    category: ["提示词小助手", "小助手功能开关", "图像反推"],
                     type: "boolean",
                     defaultValue: true,
                     tooltip: "开启或关闭图像反推提示词功能",
@@ -923,7 +900,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.NodeHelpTranslator",
                     name: "启用节点信息翻译",
-                    category: ["✨提示词小助手", "小助手功能开关", "节点信息翻译"],
+                    category: ["提示词小助手", "小助手功能开关", "节点信息翻译"],
                     type: "boolean",
                     defaultValue: true,
                     tooltip: "开启或关闭ComfyUI侧边栏节点帮助文档的翻译功能",
@@ -938,7 +915,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Settings.LogLevel",
                     name: "日志级别",
-                    category: ["✨提示词小助手", "系统", "日志级别"],
+                    category: ["提示词小助手", "系统", "日志级别"],
                     type: "hidden",
                     defaultValue: "0",
                     options: [
@@ -959,7 +936,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Settings.ShowStreamingProgress",
                     name: "控制台流式输出进度日志",
-                    category: ["✨提示词小助手", "系统", "终端日志"],
+                    category: ["提示词小助手", "系统", "终端日志"],
                     type: "boolean",
                     defaultValue: false,
                     tooltip: "开启后，控制台会显示流式输出过程，在某些终端可能导致刷屏；关闭后只显示静态的'生成中...'。",
@@ -983,7 +960,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Settings.EnableStreaming",
                     name: "流式输出开关",
-                    category: ["✨提示词小助手", "系统", "流式体验"],
+                    category: ["提示词小助手", "系统", "流式体验"],
                     type: "boolean",
                     defaultValue: true,
                     tooltip: "开启时，翻译、扩写、识别等功能将以逐字生成的流式效果显示；关闭时则恢复为全部生成后一次性显示的阻塞模式。",
@@ -996,7 +973,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Settings.IconOpacity",
                     name: " 小助手图标不透明度",
-                    category: ["✨提示词小助手", "界面", "小助手图标"],
+                    category: ["提示词小助手", "界面", "小助手图标"],
                     type: "slider",
                     min: 0,
                     max: 100,
@@ -1020,7 +997,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Settings.ClearCache",
                     name: "清理历史、标签、翻译缓存",
-                    category: ["✨提示词小助手", "系统", "清理缓存"],
+                    category: ["提示词小助手", "系统", "清理缓存"],
                     tooltip: "清理所有缓存，包括历史记录、标签、翻译缓存、节点文档翻译缓存",
                     type: () => {
                         const row = document.createElement("tr");
@@ -1134,7 +1111,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Settings.About",
                     name: "关于",
-                    category: ["✨提示词小助手", " ✨提示词小助手"],
+                    category: ["提示词小助手", " Prompt Assistant Reforge"],
                     type: () => {
                         const row = document.createElement("tr");
                         row.className = "promptwidget-settings-row";
@@ -1145,8 +1122,9 @@ export async function registerSettings() {
                         cell.style.gap = "12px";
                         // 版本徽标容器（整体可点击跳转最新版本）
                         const versionLink = document.createElement("a");
-                        versionLink.href = "https://github.com/yawiii/ComfyUI-Prompt-Assistant/releases/latest";
-                        versionLink.target = "_blank";
+                        versionLink.href = "javascript:void(0)";
+                        versionLink.style.cursor = "default";
+                        versionLink.removeAttribute("target");
                         versionLink.style.textDecoration = "none";
                         versionLink.style.display = "flex";
                         versionLink.style.alignItems = "center";
@@ -1209,16 +1187,16 @@ export async function registerSettings() {
 
                         cell.appendChild(versionLink);
 
-                        // GitHub 徽标
+                        // 发布者徽标
                         const authorTag = document.createElement("a");
-                        authorTag.href = "https://github.com/yawiii/ComfyUI-Prompt-Assistant";
-                        authorTag.target = "_blank";
+                        authorTag.href = "javascript:void(0)";
+                        authorTag.addEventListener("click", (e) => e.preventDefault());
                         authorTag.style.textDecoration = "none";
                         authorTag.style.display = "flex";
                         authorTag.style.alignItems = "center";
                         const authorBadge = document.createElement("img");
-                        authorBadge.alt = "Static Badge";
-                        authorBadge.src = "https://img.shields.io/github/stars/yawiii/ComfyUI-Prompt-Assistant?style=flat&logo=github&logoColor=%23292F34&label=Yawiii&labelColor=%23FFFFFF&color=blue";
+                        authorBadge.alt = "Prompt Assistant Reforge · Helpful Old Wang";
+                        authorBadge.src = "https://img.shields.io/badge/Publisher-Helpful%20Old%20Wang-blue?style=flat&label=Prompt%20Assistant%20Reforge&labelColor=%23555555&color=%23007ec6";
                         authorBadge.style.display = "block";
                         authorBadge.style.height = "20px";
                         authorTag.appendChild(authorBadge);
@@ -1336,7 +1314,7 @@ export async function registerSettings() {
                 {
                     id: "PromptAssistant.Features.RulesConfig",
                     name: "提示词优化和反推规则修改",
-                    category: ["✨提示词小助手", " 配置", "规则"],
+                    category: ["提示词小助手", " 配置", "规则"],
                     tooltip: "可以自定义提示词优化规则，和反推提示词规则，使得提示词生成更加符合你的需求",
                     type: () => {
                         const row = document.createElement("tr");

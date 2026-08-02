@@ -1,4 +1,4 @@
-"""
+﻿"""
 提示词增强节点 - V3 版本
 
 V3 迁移说明：
@@ -74,8 +74,8 @@ class PromptExpand(LLMNodeBase, io.ComfyNode):
 
         return io.Schema(
             node_id="PromptExpand",
-            display_name="✨Prompt Enhance",
-            category="✨Prompt Assistant",
+            display_name="Prompt Enhance",
+            category="Prompt Assistant",
             description="Enhance and expand prompts using LLM services",
             inputs=[
                 # 规则模板：来自系统配置的所有扩写规则

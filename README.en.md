@@ -1,8 +1,10 @@
-<div align="center">
+﻿<div align="center">
 
-<h1 align="center">ComfyUI Prompt Assistant ✨ Prompt Assistant V2.0</h1>
+<h1 align="center">Prompt Assistant Reforge</h1>
 
-<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/yawiii/ComfyUI-Prompt-Assistant">
+<p align="center"><strong>Prompt Assistant Reforge</strong> · Publisher: <strong>Helpful Old Wang</strong></p>
+
+<img alt="Publisher" src="https://img.shields.io/badge/Publisher-Helpful%20Old%20Wang-blue?style=flat">
 <a href="https://space.bilibili.com/520680644"><img alt="bilibili" src="https://img.shields.io/badge/Detailed Video Tutorial-blue?style=flat&logo=bilibili&logoColor=2300A5DC&labelColor=%23FFFFFF&color=%2307A3D7"></a>
 <a href="https://data.xflow.cc/wechat.png"><img alt="weChat" src="https://img.shields.io/badge/Join our Community-blue?logo=wechat&logoColor=green&labelColor=%23FFFFFF&color=%2307A3D7"></a>
 <a href="https://ycn58r88iss5.feishu.cn/share/base/form/shrcnJ1AzbUJCynW9qrNJ2zPugy"><img alt="bug" src="https://img.shields.io/badge/Bug-Feedback-orange"></a>
@@ -17,7 +19,7 @@
 
 <h4 align="center">🎉🎉 A brand new version of Prompt Assistant is online! Stronger functions, faster response! Optimized for ComfyUI Node 2.0! 🎉🎉</h4>
 
-> Supports cloud-based LLM APIs and local Ollama models. Provides translation for prompt nodes, Markdown nodes, and node documentation; features prompt enhancement, image/video captioning, common tag collection, and history logs. An all-in-one prompt assistant plugin!
+> Supports cloud-based LLM APIs, local Ollama, and llama-swap with optional auto VRAM unload. Provides translation for prompt nodes, Markdown nodes, and node documentation; features prompt enhancement, image/video captioning, common tag collection, and history logs. An all-in-one prompt assistant plugin!
 
 ## **📣 Updates**
 
@@ -285,24 +287,24 @@
 ![Node Doc](https://github.com/user-attachments/assets/32c9a712-20c3-4b5e-b331-bfb885b7b5d4)
 
 ### 📒 Node Introduction
-Category: `✨Prompt Assistant`
+Category: `Prompt Assistant`
 
 #### **🔹 Translation Node**
-`✨Prompt Assistant → Prompt Translation`
+`Prompt Assistant → Prompt Translation`
 <img width="1700" height="700" alt="Translation Node" src="https://github.com/user-attachments/assets/9dbc9fc9-1b91-43b6-822e-d598b2c8168f" />
 
 #### **🔹 Prompt Optimization Node**
-`✨Prompt Assistant → Prompt Optimization`
+`Prompt Assistant → Prompt Optimization`
 <img width="1700" height="911" alt="Expand Node" src="https://github.com/user-attachments/assets/ea821506-d684-4526-9119-621bb0467ddf" />
 
 #### **🔹 Image Caption Node**
-`✨Prompt Assistant → Image Caption Prompt`
+`Prompt Assistant → Image Caption Prompt`
 `Captions images and optimizes editing instructions via visual models.`
 <img width="1700" height="800" alt="Image Caption Node" src="https://github.com/user-attachments/assets/8ff3ac96-724a-48d0-8e15-23fe0b28bec1" />
 <img width="1700" height="800" alt="VLM instructions" src="https://github.com/user-attachments/assets/a95dc0f4-1d46-438f-a242-4087f6e8361a" />
 
 #### **🔹 Video Caption Node**
-`✨Prompt Assistant → Video Caption Prompt`
+`Prompt Assistant → Video Caption Prompt`
 <img width="1700" height="1080" alt="Video Caption Node" src="https://github.com/user-attachments/assets/0143096b-24d5-4308-82ff-e0a99144db0b" />
 <img width="1700" height="1102" alt="Frame Picker Tool" src="https://github.com/user-attachments/assets/96c2bd08-b26c-4df1-b32c-be8e20328c97" />
 

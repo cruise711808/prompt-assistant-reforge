@@ -1,5 +1,5 @@
-{
-    "__config_version": "2.1",
+﻿{
+    "__config_version": "2.2",
     "__comment": "提示词小助手配置文件模板",
     "baidu_translate": {
         "app_id": "",
@@ -47,16 +47,17 @@
             "vlm_models": []
         },
         {
-            "id": "service_355",
+            "id": "llama_swap",
             "type": "openai_compatible",
-            "name": "llama.cpp",
-            "description": "本地模型服务",
+            "name": "llama-swap",
+            "description": "本地 llama-swap 模型代理（支持自动卸载显存）",
             "base_url": "http://127.0.0.1:8080/v1",
-            "api_key": "",
-            "auto_unload": false,
-            "disable_thinking": false,
-            "enable_advanced_params": false,
-            "filter_thinking_output": false,
+            "api_key": "no-key",
+            "auto_unload": true,
+            "unload_backend": "llama_swap",
+            "disable_thinking": true,
+            "enable_advanced_params": true,
+            "filter_thinking_output": true,
             "llm_models": [],
             "vlm_models": []
         }

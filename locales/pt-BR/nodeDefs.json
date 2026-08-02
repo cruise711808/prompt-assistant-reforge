@@ -1,6 +1,6 @@
-{
+﻿{
     "PromptExpand": {
-        "display_name": "✨Expansão de Prompt",
+        "display_name": "Expansão de Prompt",
         "description": "Melhore e expanda o prompt usando LLM",
         "inputs": {
             "rule": {
@@ -44,7 +44,7 @@
         }
     },
     "ImageCaptionNode": {
-        "display_name": "✨Legenda de Imagem",
+        "display_name": "Legenda de Imagem",
         "description": "Gerar descrição da imagem usando VLM",
         "inputs": {
             "image": {
@@ -92,7 +92,7 @@
         }
     },
     "PromptTranslate": {
-        "display_name": "✨Tradução de Prompt",
+        "display_name": "Tradução de Prompt",
         "description": "Traduzir prompt entre idiomas",
         "inputs": {
             "source_text": {
@@ -128,7 +128,7 @@
         }
     },
     "VideoCaptionNode": {
-        "display_name": "✨Legenda de Vídeo",
+        "display_name": "Legenda de Vídeo",
         "description": "Gerar descrição do vídeo usando VLM",
         "inputs": {
             "rule": {
@@ -196,7 +196,7 @@
         }
     },
     "KontextPresetNode": {
-        "display_name": "✨Predefinição Kontext",
+        "display_name": "Predefinição Kontext",
         "description": "Gerar instruções criativas usando predefinições Kontext",
         "inputs": {
             "image": {

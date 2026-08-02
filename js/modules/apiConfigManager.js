@@ -1,4 +1,4 @@
-/**
+﻿/**
  * API配置管理器 v2.0
  * 支持动态服务商管理和多模型配置
  */
@@ -24,10 +24,12 @@ import { tUI } from "../utils/uiI18n.js";
 
 class APIConfigManager {
     // 预置服务商ID列表（不可编辑/删除）
-    static PRESET_SERVICE_IDS = ['openrouter', 'xai', 'ollama', 'service_355'];
+    static PRESET_SERVICE_IDS = ['openrouter', 'xai', 'ollama', 'llama_swap'];
 
     // 预置服务商中锁定 Base URL 不可修改的（ollama/service_355 可改地址）
     static LOCKED_BASE_URL_IDS = ['openrouter', 'xai'];
+
+    // 支持自动卸载显存的服务
 
     constructor() {
         // 服务商数据
@@ -896,6 +898,23 @@ class APIConfigManager {
     /**
      * 创建Ollama标签页
      */
+
+    /**
+     * 是否支持自动释放模型显存（Ollama / llama-swap）
+     */
+    supportsAutoUnload(service) {
+        if (!service) return false;
+        const type = String(service.type || '').toLowerCase();
+        const id = String(service.id || '').toLowerCase();
+        const name = String(service.name || '').toLowerCase();
+        const backend = String(service.unload_backend || '').toLowerCase();
+        if (type === 'ollama' || id === 'ollama') return true;
+        if (type === 'llama_swap' || id === 'llama_swap' || id === 'service_355') return true;
+        if (backend === 'ollama' || backend === 'llama_swap') return true;
+        const compact = name.replace(/\s+/g, '').replace(/_/g, '-');
+        return compact.includes('llama-swap') || compact.includes('llamaswap') || name.includes('ollama');
+    }
+
     _createOllamaTab() {
         const pane = document.createElement('div');
         pane.className = 'tab-pane';
@@ -1226,8 +1245,8 @@ class APIConfigManager {
         filterThinkingContainer.appendChild(filterThinkingSwitchWrapper);
         settingsInlineContainer.appendChild(filterThinkingContainer);
 
-        // Ollama专属:自动释放模型开关(仅前端UI)
-        if (service.type === 'ollama') {
+        // Ollama / llama-swap: 自动释放模型开关(仅前端UI)
+        if (this.supportsAutoUnload(service)) {
             const autoUnloadContainer = document.createElement('div');
             autoUnloadContainer.className = 'service-setting-item';
 

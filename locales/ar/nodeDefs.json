@@ -1,6 +1,6 @@
-{
+﻿{
     "PromptExpand": {
-        "display_name": "✨التحسين الفوري",
+        "display_name": "التحسين الفوري",
         "description": "قم بتعزيز موجهك باستخدام LLM",
         "inputs": {
             "rule": {
@@ -44,7 +44,7 @@
         }
     },
     "ImageCaptionNode": {
-        "display_name": "✨تعليق الصورة",
+        "display_name": "تعليق الصورة",
         "description": "إنشاء تسمية توضيحية للصورة باستخدام VLM",
         "inputs": {
             "image": {
@@ -92,7 +92,7 @@
         }
     },
     "PromptTranslate": {
-        "display_name": "✨ترجمة سريعة",
+        "display_name": "ترجمة سريعة",
         "description": "ترجمة موجه بين اللغات",
         "inputs": {
             "source_text": {
@@ -128,7 +128,7 @@
         }
     },
     "VideoCaptionNode": {
-        "display_name": "✨شرح الفيديو",
+        "display_name": "شرح الفيديو",
         "description": "إنشاء تسمية توضيحية للفيديو باستخدام VLM",
         "inputs": {
             "rule": {
@@ -196,7 +196,7 @@
         }
     },
     "KontextPresetNode": {
-        "display_name": "✨الإعداد المسبق للنص",
+        "display_name": "الإعداد المسبق للنص",
         "description": "قم بإنشاء تعليمات إبداعية باستخدام إعدادات Kontext المسبقة",
         "inputs": {
             "image": {

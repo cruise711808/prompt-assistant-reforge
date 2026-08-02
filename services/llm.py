@@ -1,4 +1,4 @@
-"""
+﻿"""
 LLM服务 - 重构版本
 提供大语言模型的扩写和翻译功能
 继承OpenAICompatibleService以复用通用逻辑
@@ -216,7 +216,7 @@ class LLMService(OpenAICompatibleService):
             finally:
                 if auto_unload:
                     try:
-                        await cls._unload_ollama_model(model, {"base_url": native_base, "auto_unload": True})
+                        await cls._unload_ollama_model(model, {"base_url": native_base, "auto_unload": True, "type": "ollama", "unload_backend": "ollama"})
                     except:
                         pass
         
@@ -443,8 +443,14 @@ class LLMService(OpenAICompatibleService):
                 cancel_event=cancel_event,
                 task_type=task_type or TASK_EXPAND,
                 source=source,
-                filter_thinking_output=effective_filter_thinking_output
-            )
+                filter_thinking_output=effective_filter_thinking_output,
+                provider_id=provider,
+                auto_unload=(
+                    custom_provider_config.get('auto_unload')
+                    if custom_provider_config and 'auto_unload' in custom_provider_config
+                    else (service.get('auto_unload') if service else None)
+                ),
+                )
 
             if result["success"]:
                 success, content = postprocess_model_output(
@@ -700,8 +706,14 @@ class LLMService(OpenAICompatibleService):
                 cancel_event=cancel_event,
                 task_type=task_type or TASK_TRANSLATE,
                 source=source,
-                filter_thinking_output=effective_filter_thinking_output
-            )
+                filter_thinking_output=effective_filter_thinking_output,
+                provider_id=provider,
+                auto_unload=(
+                    custom_provider_config.get('auto_unload')
+                    if custom_provider_config and 'auto_unload' in custom_provider_config
+                    else (service.get('auto_unload') if service else None)
+                ),
+                )
 
             if result["success"]:
                 success, content = postprocess_model_output(

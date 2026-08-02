@@ -1,10 +1,12 @@
-
+﻿
 <div align="center">
 
-<h1 align="center">ComfyUI Prompt Assistant✨提示词小助手V2.0</h1>
+<h1 align="center">Prompt Assistant Reforge · 提示词小助手</h1>
+
+<p align="center"><strong>Prompt Assistant Reforge</strong> · Publisher: <strong>Helpful Old Wang</strong></p>
 
 
-<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/yawiii/ComfyUI-Prompt-Assistant">
+<img alt="Publisher" src="https://img.shields.io/badge/Publisher-Helpful%20Old%20Wang-blue?style=flat">
 <a href="https://space.bilibili.com/520680644"><img alt="bilibili" src="https://img.shields.io/badge/详细视频教程-blue?style=flat&logo=bilibili&logoColor=2300A5DC&labelColor=%23FFFFFF&color=%2307A3D7"></a>
 <a href="https://data.xflow.cc/wechat.png"><img alt="weChat" src="https://img.shields.io/badge/欢迎加入交流群-blue?logo=wechat&logoColor=green&labelColor=%23FFFFFF&color=%2307A3D7"></a>
 <a href="https://ycn58r88iss5.feishu.cn/share/base/form/shrcnJ1AzbUJCynW9qrNJ2zPugy"><img alt="bug" src="https://img.shields.io/badge/Bug-反馈-orange"></a>
@@ -19,10 +21,21 @@
 
 <h4 align="center">🎉🎉全新版本的提示词小助手上线啦！功能更强，响应速度更快！适配ComfyUI node2.0！🎉🎉</h4>
 
-> 支持调用云端大模型API、本地Ollama大模型。实现提示词、Markdown节点、节点文档翻译；提示词优化、图像反推和视频反推；常用标签收藏、历史记录等功能。是一个全能all in one的提示词插件！
+> 支持调用云端大模型API、本地 Ollama 与 llama-swap（请求后可自动卸载释放显存）。实现提示词、Markdown节点、节点文档翻译；提示词优化、图像反推和视频反推；常用标签收藏、历史记录等功能。是一个全能all in one的提示词插件！
 
 
 ## **📣更新**
+
+<details open>
+<summary><strong>[2026-08-02] V2.0.7 (Prompt Assistant Reforge)</strong></summary>
+
+**Changes:**
+* **llama-swap 预置服务**：将默认的 llama.cpp 改为 llama-swap，并支持请求完成后自动卸载释放显存。
+* **本地卸载增强**：Ollama 与 llama-swap 均支持自动卸载；Ollama 仍走 `keep_alive=0`，llama-swap 走 `/api/models/unload`。
+* **Reforge 标识**：去掉设置与节点名称中的星星 emoji；项目展示为 Prompt Assistant Reforge，发布者为 Helpful Old Wang。
+
+</details>
+
 
 <details open>
 <summary><strong>[2026-04-21] 🔥V2.0.6</strong></summary>
@@ -54,7 +67,7 @@
 * **置灰内置服务商 baseUrl输入框**：避免误修改导致请求出现移除。
 
 * **网络异常报错**：修复因为强制直连机制，导致 xflow 等中转站请求出现网络异常报错。
-* **图像节点✨图标移至右侧**:避免node2.0 下与节点 id 信息重叠。
+* **图像节点图标移至右侧**:避免node2.0 下与节点 id 信息重叠。
 
 </details>
 <details>
@@ -276,7 +289,7 @@
 
 </details>
 
-## **✨ 功能介绍**
+## ** 功能介绍**
 #### 💡提示词优化+翻译
 
 `支持预设多套提示词优化规则（如扩写、qwen-edit指令优化，kontext指令优化并翻译等`
@@ -320,22 +333,22 @@
 
 
 ### 📒节点介绍
-节点分类`✨Prompt Assistant`
+节点分类`Prompt Assistant`
 
 #### **🔹翻译节点**
-`✨Prompt Assistant → 提示词翻译`
+`Prompt Assistant → 提示词翻译`
 
 <img width="1700" height="700" alt="翻译节点" src="https://github.com/user-attachments/assets/9dbc9fc9-1b91-43b6-822e-d598b2c8168f" />
 
 
 #### **🔹提示词优化节点**
-`✨Prompt Assistant → 提示词优化`
+`Prompt Assistant → 提示词优化`
 
 <img width="1700" height="911" alt="扩写节点" src="https://github.com/user-attachments/assets/ea821506-d684-4526-9119-621bb0467ddf" />
 
 
 #### **🔹图像反推节点**
-`✨Prompt Assistant → 图像反推提示词`
+`Prompt Assistant → 图像反推提示词`
 
 `可以反推图像、结合视觉模型优化图像编辑指令`
 
@@ -347,7 +360,7 @@
 
 
 #### **🔹视频反推节点**
-`✨Prompt Assistant → 视频反推提示词`
+`Prompt Assistant → 视频反推提示词`
 
 <img width="1700" height="1080" alt="视频反推节点" src="https://github.com/user-attachments/assets/0143096b-24d5-4308-82ff-e0a99144db0b" />
 <img width="1700" height="1102" alt="选取帧工具" src="https://github.com/user-attachments/assets/96c2bd08-b26c-4df1-b32c-be8e20328c97" />

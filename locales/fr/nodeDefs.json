@@ -1,6 +1,6 @@
-{
+﻿{
     "PromptExpand": {
-        "display_name": "✨Amélioration rapide",
+        "display_name": "Amélioration rapide",
         "description": "Améliorez votre invite à l'aide de LLM",
         "inputs": {
             "rule": {
@@ -44,7 +44,7 @@
         }
     },
     "ImageCaptionNode": {
-        "display_name": "✨Légende de l'image",
+        "display_name": "Légende de l'image",
         "description": "Générer une légende pour l'image à l'aide de VLM",
         "inputs": {
             "image": {
@@ -92,7 +92,7 @@
         }
     },
     "PromptTranslate": {
-        "display_name": "✨Traduction rapide",
+        "display_name": "Traduction rapide",
         "description": "Traduire l'invite entre les langues",
         "inputs": {
             "source_text": {
@@ -128,7 +128,7 @@
         }
     },
     "VideoCaptionNode": {
-        "display_name": "✨Légende de la vidéo",
+        "display_name": "Légende de la vidéo",
         "description": "Générer une légende pour une vidéo à l'aide de VLM",
         "inputs": {
             "rule": {
@@ -196,7 +196,7 @@
         }
     },
     "KontextPresetNode": {
-        "display_name": "✨Contexte prédéfini",
+        "display_name": "Contexte prédéfini",
         "description": "Générez des instructions créatives à l'aide des préréglages Kontext",
         "inputs": {
             "image": {

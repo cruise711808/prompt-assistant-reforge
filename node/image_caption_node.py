@@ -1,4 +1,4 @@
-"""
+﻿"""
 图像反推（图片反推提示词）节点 - V3 版本
 
 V3 迁移说明：
@@ -67,8 +67,8 @@ class ImageCaptionNode(VLMNodeBase, io.ComfyNode):
 
         return io.Schema(
             node_id="ImageCaptionNode",
-            display_name="✨Image Caption (VLM)",
-            category="✨Prompt Assistant",
+            display_name="Image Caption (VLM)",
+            category="Prompt Assistant",
             description="Extract text prompt from image using Vision-Language Models",
             inputs=[
                 io.Image.Input(

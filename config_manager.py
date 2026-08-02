@@ -1,4 +1,4 @@
-import os
+﻿import os
 import json
 import csv
 import tempfile
@@ -118,7 +118,7 @@ class ConfigManager:
     def _log(self, msg: str):
         """统一控制台日志前缀"""
         from .utils.common import _ANSI_CLEAR_EOL
-        print(f"\r{_ANSI_CLEAR_EOL}✨ {msg}", flush=True)
+        print(f"\r{_ANSI_CLEAR_EOL}[PA] {msg}", flush=True)
 
     # ---模板加载---
     def _load_template(self, template_name: str, fallback: dict = None) -> dict:
@@ -696,7 +696,7 @@ class ConfigManager:
             "min_p": target_model.get('min_p'),
             "presence_penalty": target_model.get('presence_penalty'),
             "repeat_penalty": target_model.get('repeat_penalty'),
-            "auto_unload": service.get('auto_unload', True) if service.get('type') == 'ollama' else None,
+            "auto_unload": service.get('auto_unload', True) if self._service_supports_auto_unload(service) else None,
             "providers": {}  # v2.0中不再使用此字段
         }
 
@@ -783,7 +783,7 @@ class ConfigManager:
             "min_p": target_model.get('min_p'),
             "presence_penalty": target_model.get('presence_penalty'),
             "repeat_penalty": target_model.get('repeat_penalty'),
-            "auto_unload": service.get('auto_unload', True) if service.get('type') == 'ollama' else None,
+            "auto_unload": service.get('auto_unload', True) if self._service_supports_auto_unload(service) else None,
             "providers": {}  # v2.0中不再使用此字段
         }
 
@@ -893,7 +893,7 @@ class ConfigManager:
             "min_p": target_model.get('min_p'),
             "presence_penalty": target_model.get('presence_penalty'),
             "repeat_penalty": target_model.get('repeat_penalty'),
-            "auto_unload": service.get('auto_unload', True) if service.get('type') == 'ollama' else None,
+            "auto_unload": service.get('auto_unload', True) if self._service_supports_auto_unload(service) else None,
             "providers": {}
         }
 
@@ -1165,6 +1165,29 @@ class ConfigManager:
         """
         return self._get_service_by_id(service_id)
     
+
+    @staticmethod
+    def _service_supports_auto_unload(service: dict) -> bool:
+        """Whether a service supports local model auto-unload (Ollama / llama-swap)."""
+        try:
+            from .utils.model_unload import service_supports_auto_unload
+            return service_supports_auto_unload(service)
+        except Exception:
+            if not isinstance(service, dict):
+                return False
+            service_type = str(service.get("type") or "").lower()
+            service_id = str(service.get("id") or "").lower()
+            name = str(service.get("name") or "").lower()
+            backend = str(service.get("unload_backend") or "").lower()
+            if service_type == "ollama" or service_id == "ollama":
+                return True
+            if service_type == "llama_swap" or service_id in ("llama_swap", "service_355"):
+                return True
+            if backend in ("ollama", "llama_swap"):
+                return True
+            compact = name.replace(" ", "").replace("_", "-")
+            return ("llama-swap" in compact) or ("ollama" in name)
+
     def create_service(self, service_type: str, name: str = "", base_url: str = "", 
                       api_key: str = "", description: str = ""):
         """
@@ -1212,9 +1235,12 @@ class ConfigManager:
                 "vlm_models": []
             }
             
-            # Ollama特有配置
-            if service_type == "ollama":
+            # 本地服务自动卸载配置
+            if service_type in ("ollama", "llama_swap"):
                 new_service["auto_unload"] = True
+                if service_type == "llama_swap":
+                    new_service["type"] = "openai_compatible"
+                    new_service["unload_backend"] = "llama_swap"
             
             # 添加到配置
             if 'model_services' not in config:
@@ -1454,7 +1480,7 @@ class ConfigManager:
                 # 直接使用明文API Key
                 service['api_key'] = kwargs['api_key'] or ""
             
-            if 'auto_unload' in kwargs and service.get('type') == 'ollama':
+            if 'auto_unload' in kwargs and self._service_supports_auto_unload(service):
                 service['auto_unload'] = kwargs['auto_unload']
             
             if 'disable_thinking' in kwargs:

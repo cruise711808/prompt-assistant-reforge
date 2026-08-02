@@ -1,4 +1,4 @@
-"""
+﻿"""
 视频反推（视频理解）节点 - V3 版本
 
 V3 迁移说明：
@@ -74,8 +74,8 @@ class VideoCaptionNode(VLMNodeBase, io.ComfyNode):
 
         return io.Schema(
             node_id="VideoCaptionNode",
-            display_name="✨Video Caption (VLM)",
-            category="✨Prompt Assistant",
+            display_name="Video Caption (VLM)",
+            category="Prompt Assistant",
             description="Extract text prompt from video frames using Vision-Language Models",
             inputs=[
                 # IMAGE batch 输入（兼容大多数图像序列节点）

@@ -1,4 +1,4 @@
-"""
+﻿"""
 提示词翻译节点 - V3 版本
 
 V3 迁移说明：
@@ -43,8 +43,8 @@ class PromptTranslate(LLMNodeBase, io.ComfyNode):
 
         return io.Schema(
             node_id="PromptTranslate",
-            display_name="✨Prompt Translate",
-            category="✨Prompt Assistant",
+            display_name="Prompt Translate",
+            category="Prompt Assistant",
             description="Auto-detect input language and translate to target language",
             inputs=[
                 io.String.Input(

@@ -1,4 +1,4 @@
-"""
+﻿"""
 提示词内容提取预设节点 - V3 版本
 """
 
@@ -45,8 +45,8 @@ class KontextPresetNode(BaseNode, io.ComfyNode):
             
         return io.Schema(
             node_id="KontextPresetNode",
-            display_name="✨KonText Extractor",
-            category="✨Prompt Assistant",
+            display_name="KonText Extractor",
+            category="Prompt Assistant",
             description="Extract and format prompt templates from a selected KonText",
             inputs=[
                 io.Combo.Input(

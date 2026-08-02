@@ -1,4 +1,4 @@
-"""
+﻿"""
 节点抽象基类
 提供所有节点的通用基础能力，包括线程管理、中断检测、Provider 配置等
 
@@ -206,7 +206,7 @@ class BaseNode:
             return True
 
         service_type = str(service.get('type', '') or '').strip().lower()
-        if service_type == 'ollama':
+        if service_type in ('ollama', 'llama_swap'):
             return False
 
         for key in ('requires_api_key', 'api_key_required', 'auth_required'):

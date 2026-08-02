@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 节点帮助文档翻译模块 (Node Help Translator)
  * 独立模块，用于检测 ComfyUI 侧边栏的节点文档翻译功能
  */
@@ -420,7 +420,7 @@ class NodeHelpTranslator {
             case 'translate':
                 label = '翻译';
                 iconClass = 'pi pi-language pa-translate-btn-icon';
-                tooltip = '使用✨提示词小助手翻译文档';
+                tooltip = '使用提示词小助手翻译文档';
                 break;
             case 'translating':
                 label = '翻译中...';

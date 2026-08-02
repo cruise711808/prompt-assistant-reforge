@@ -1,6 +1,6 @@
-{
+﻿{
     "PromptExpand": {
-        "display_name": "✨提示詞增強",
+        "display_name": "提示詞增強",
         "description": "使用LLM增強或擴寫您的提示詞",
         "inputs": {
             "rule": {
@@ -44,7 +44,7 @@
         }
     },
     "ImageCaptionNode": {
-        "display_name": "✨圖像反推提示詞",
+        "display_name": "圖像反推提示詞",
         "description": "使用VLM生成圖像描述",
         "inputs": {
             "image": {
@@ -92,7 +92,7 @@
         }
     },
     "PromptTranslate": {
-        "display_name": "✨提示詞翻譯",
+        "display_name": "提示詞翻譯",
         "description": "多語言提示詞翻譯",
         "inputs": {
             "source_text": {
@@ -128,7 +128,7 @@
         }
     },
     "VideoCaptionNode": {
-        "display_name": "✨視頻反推提示詞",
+        "display_name": "視頻反推提示詞",
         "description": "使用VLM生成視頻描述",
         "inputs": {
             "rule": {
@@ -196,7 +196,7 @@
         }
     },
     "KontextPresetNode": {
-        "display_name": "✨Kontext預設",
+        "display_name": "Kontext預設",
         "description": "使用Kontext預設生成創意指令",
         "inputs": {
             "image": {

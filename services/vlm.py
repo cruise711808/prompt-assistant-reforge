@@ -1,4 +1,4 @@
-"""
+﻿"""
 VLM服务 - 重构版本
 提供视觉模型的图像分析功能
 继承OpenAICompatibleService以复用通用逻辑
@@ -214,7 +214,7 @@ class VisionService(OpenAICompatibleService):
             finally:
                 try:
                     from .llm import LLMService
-                    await LLMService._unload_ollama_model(model, {"base_url": native_base, "auto_unload": auto_unload})
+                    await LLMService._unload_ollama_model(model, {"base_url": native_base, "auto_unload": auto_unload, "type": "ollama", "unload_backend": "ollama"})
                 except:
                     pass
         
@@ -423,8 +423,14 @@ class VisionService(OpenAICompatibleService):
                 cancel_event=cancel_event,
                 task_type=task_type or TASK_IMAGE_CAPTION,
                 source=source,
-                filter_thinking_output=effective_filter_thinking_output
-            )
+                filter_thinking_output=effective_filter_thinking_output,
+                provider_id=provider,
+                auto_unload=(
+                    custom_provider_config.get('auto_unload')
+                    if custom_provider_config and 'auto_unload' in custom_provider_config
+                    else (service.get('auto_unload') if service else None)
+                ),
+                )
 
             if result["success"]:
                 success, content = postprocess_model_output(
@@ -655,8 +661,14 @@ class VisionService(OpenAICompatibleService):
                 cancel_event=cancel_event,
                 task_type=task_type or TASK_VIDEO_CAPTION,
                 source=source,
-                filter_thinking_output=effective_filter_thinking_output
-            )
+                filter_thinking_output=effective_filter_thinking_output,
+                provider_id=provider,
+                auto_unload=(
+                    custom_provider_config.get('auto_unload')
+                    if custom_provider_config and 'auto_unload' in custom_provider_config
+                    else (service.get('auto_unload') if service else None)
+                ),
+                )
 
             if result["success"]:
                 success, content = postprocess_model_output(

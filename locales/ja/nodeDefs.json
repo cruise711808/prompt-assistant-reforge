@@ -1,6 +1,6 @@
-{
+﻿{
     "PromptExpand": {
-        "display_name": "✨プロンプト拡張",
+        "display_name": "プロンプト拡張",
         "description": "LLMを使用してプロンプトを拡張・改善します",
         "inputs": {
             "rule": {
@@ -44,7 +44,7 @@
         }
     },
     "ImageCaptionNode": {
-        "display_name": "✨画像キャプション",
+        "display_name": "画像キャプション",
         "description": "VLMを使用して画像のキャプションを生成します",
         "inputs": {
             "image": {
@@ -92,7 +92,7 @@
         }
     },
     "PromptTranslate": {
-        "display_name": "✨プロンプト翻訳",
+        "display_name": "プロンプト翻訳",
         "description": "言語間でプロンプトを翻訳します",
         "inputs": {
             "source_text": {
@@ -128,7 +128,7 @@
         }
     },
     "VideoCaptionNode": {
-        "display_name": "✨動画キャプション",
+        "display_name": "動画キャプション",
         "description": "VLMを使用して動画のキャプションを生成します",
         "inputs": {
             "rule": {
@@ -196,7 +196,7 @@
         }
     },
     "KontextPresetNode": {
-        "display_name": "✨Kontextプリセット",
+        "display_name": "Kontextプリセット",
         "description": "Kontextプリセットを使用してクリエイティブな指示を生成します",
         "inputs": {
             "image": {

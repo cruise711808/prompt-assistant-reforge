@@ -1,5 +1,5 @@
-{
-  "✨提示词小助手": "✨Prompt Assistant",
+﻿{
+  "提示词小助手": "Prompt Assistant",
   "小助手功能开关": "Feature Toggles",
   "总开关": "Master Switch",
   "系统": "System",
@@ -33,7 +33,7 @@
   "流式体验": "Streaming",
   "小助手图标": "Assistant Icon",
   "清理缓存": "Clear Cache",
-  " ✨提示词小助手": " ✨Prompt Assistant",
+  " 提示词小助手": " Prompt Assistant",
   "规则": "Rules",
   "启用小助手": "Enable Assistant",
   "小助手创建方式（提示词）": "Prompt Assistant Creation Mode",
@@ -238,7 +238,7 @@
   "过滤思维链输出": "Filter CoT Output",
   "针对无法关闭思维链模型，移除思考过程内容。默认开启。": "For models that cannot disable CoT, remove reasoning content. Enabled by default.",
   "自动释放模型": "Auto Unload Model",
-  "请求完成后自动卸载模型以释放显存。⚠️该选项对针对前端小助手生效，节点有独立的选项。": "Unload model after request to free VRAM. ⚠️ Applies to frontend assistant only; nodes have separate options.",
+  "请求完成后自动卸载 Ollama / llama-swap 模型以释放显存。⚠️该选项主要对前端小助手生效，节点有独立选项。": "Auto unload Ollama / llama-swap models after requests to free VRAM. ⚠️ Applies mainly to frontend assistant; nodes have separate options.",
   "2️⃣ 添加翻译、提示词优化的大语言模型 (LLM)": "2️⃣ Add LLM models for translation and prompt optimization",
   "3️⃣ 添加图像、视频反推的视觉模型 (VLM)": "3️⃣ Add VLM models for image and video caption",
   "添加模型": "Add Model",
